@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta";
 import DashboardLayout from "~/components/layout/Dashboard";
 
-const Dashboard = () => {
+const DashboardPage = () => {
 	return (
 		<>
 			<Title>Clientes - ServiGraf</Title>
@@ -34,4 +34,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default DashboardPage;

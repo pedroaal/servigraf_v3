@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { A } from "@solidjs/router";
 import MainLayout from "~/components/layout/Main";
 
-const NotFound = () => {
+const NotFoundPage = () => {
 	return (
 		<>
 			<Title>Not Found - ServiGraf</Title>
@@ -36,4 +36,4 @@ const NotFound = () => {
 	);
 };
 
-export default NotFound;
+export default NotFoundPage;

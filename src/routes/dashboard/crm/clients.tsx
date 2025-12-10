@@ -11,7 +11,7 @@ interface Cliente {
 	status: boolean;
 }
 
-export default function Clientes() {
+const ClientsPage = () => {
 	const [clientes, setClientes] = createSignal<Cliente[]>([
 		// Example data - in real app this would come from Appwrite
 	]);
@@ -143,4 +143,6 @@ export default function Clientes() {
 			</DashboardLayout>
 		</>
 	);
-}
+};
+
+export default ClientsPage;

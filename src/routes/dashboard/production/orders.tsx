@@ -16,7 +16,7 @@ interface Pedido {
 	status: string;
 }
 
-export default function Pedidos() {
+const OrdersPage = () => {
 	const [pedidos, setPedidos] = createSignal<Pedido[]>([
 		// Example data - in real app this would come from Appwrite
 	]);
@@ -155,4 +155,6 @@ export default function Pedidos() {
 			</DashboardLayout>
 		</>
 	);
-}
+};
+
+export default OrdersPage;
