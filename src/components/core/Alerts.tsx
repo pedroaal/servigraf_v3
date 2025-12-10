@@ -1,4 +1,10 @@
-import { FaSolidX } from "solid-icons/fa";
+import {
+	FaSolidCircleCheck,
+	FaSolidCircleInfo,
+	FaSolidCircleXmark,
+	FaSolidTriangleExclamation,
+	FaSolidX,
+} from "solid-icons/fa";
 import { type Component, For, Show, useContext } from "solid-js";
 import { Portal } from "solid-js/web";
 
@@ -24,19 +30,33 @@ const Alert: Component<IAlert> = (props) => {
 		}
 	};
 
+	const alertIcon = () => {
+		switch (props.type) {
+			case "success":
+				return <FaSolidCircleCheck size={24} />;
+			case "error":
+				return <FaSolidCircleXmark size={24} />;
+			case "warning":
+				return <FaSolidTriangleExclamation size={24} />;
+			case "info":
+				return <FaSolidCircleInfo size={24} />;
+			default:
+				return <FaSolidCircleInfo size={24} />;
+		}
+	};
+
 	return (
-		<div class="fixed top-4 right-4 z-50 w-96 max-w-full">
-			<div class={alertClass()}>
-				<div class="flex items-center justify-between w-full">
-					<span>{props.message}</span>
-					<button
-						class="btn btn-sm btn-ghost"
-						type="button"
-						onClick={() => removeAlert(props.id)}
-					>
-						<FaSolidX />
-					</button>
-				</div>
+		<div class={alertClass()}>
+			{alertIcon()}
+			<span>{props.message}</span>
+			<div>
+				<button
+					class="btn btn-square btn-ghost btn-sm"
+					type="button"
+					onClick={() => removeAlert(props.id)}
+				>
+					<FaSolidX />
+				</button>
 			</div>
 		</div>
 	);
