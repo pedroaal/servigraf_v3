@@ -1,28 +1,23 @@
 import { Title } from "@solidjs/meta";
 import MainLayout from "~/components/layout/Main";
 
-const Home = () => {
+const HomePage = () => {
 	return (
 		<>
 			<Title>ServiGraf</Title>
 
 			<MainLayout>
-				<div class="hero min-h-full bg-base-200">
+				<div class="hero min-h-screen">
 					<div class="hero-content text-center">
-						<div class="max-w-md">
-							<h1 class="text-5xl font-bold">ServiGraf V2</h1>
-							<p class="py-6">
-								Sistema ERP migrado de Laravel + Bootstrap a SolidStart +
-								Appwrite + DaisyUI
-							</p>
-							<div class="space-x-4">
-								<a href="/login" class="btn btn-primary">
-									Iniciar Sesión
-								</a>
-								<a href="/register" class="btn btn-secondary">
-									Registrarse
-								</a>
+						<div class="max-w-2xl">
+							<div class="mb-8">
+								<div class="text-6xl font-bold text-blue-600 mb-4">
+									<span class="font-extrabold">Servi</span>Graf
+								</div>
 							</div>
+							<h3 class="text-2xl text-gray-500">
+								Diseño gráfico & impresión offset
+							</h3>
 						</div>
 					</div>
 				</div>
@@ -31,4 +26,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default HomePage;
