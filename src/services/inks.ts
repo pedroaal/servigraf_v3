@@ -1,44 +1,63 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Inks } from "~/types/appwrite";
 
-export const listInks(options?: {
-	companyId: string;
-	search?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.INKS);
-	let docs = res.documents as Ink[];
+export const listInks = async (
+	companyId: string,
+	options?: {
+		search?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
-	if (options?.search) {
-		const q = options.search.toLowerCase();
-		docs = docs.filter((d) => (d.color || "").toLowerCase().includes(q));
-	}
+	if (options?.search) queries.push(Query.equal("color", options.search));
+
+	const res = await tables.listRows<Inks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INKS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getInk(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.INKS, id);
-	return res as Ink;
-}
+export const getInk = async (id: string) => {
+	const res = await tables.getRow<Inks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INKS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createInk(payload: Partial<Ink>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.INKS,
-		makeId(),
-		payload,
-	);
-	return res as Ink;
-}
+export const createInk = async (payload: Inks) => {
+	const res = await tables.createRow<Inks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INKS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateInk(id: string, payload: Partial<Ink>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.INKS, id, payload);
-	return res as Ink;
-}
+export const updateInk = async (id: string, payload: Partial<Inks>) => {
+	const res = await tables.updateRow<Inks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INKS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteInk(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.INKS, id);
-}
+export const deleteInk = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INKS,
+		rowId: id,
+	});
+};

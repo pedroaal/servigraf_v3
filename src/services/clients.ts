@@ -1,45 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Clients } from "~/types/appwrite";
 
-export const listClients(options?: {
-	companyId: string;
-	clientcompanyId: string;
-	followUp?: boolean;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CLIENTS);
-	let docs = res.documents as ClientRecord[];
-
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
+export const listClients = async (
+	companyId: string,
+	options?: {
+		clientCompanyId?: string;
+		followUp?: boolean;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 	if (options?.clientCompanyId)
-		docs = docs.filter((d) => d.clientCompanyId === options.clientCompanyId);
+		queries.push(Query.equal("clientCompanyId", options.clientCompanyId));
 	if (typeof options?.followUp === "boolean")
-		docs = docs.filter((d) => d.followUp === options.followUp);
+		queries.push(Query.equal("followUp", options.followUp));
 
+	const res = await tables.listRows<Clients>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENTS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getClient(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CLIENTS, id);
-	return res as ClientRecord;
-}
+export const createClient = async (payload: Clients) => {
+	const res = await tables.createRow<Clients>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const createClient(payload: Partial<ClientRecord>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CLIENTS,
-		makeId(),
-		payload,
-	);
-	return res as ClientRecord;
-}
+export const updateClient = async (id: string, payload: Partial<Clients>) => {
+	const res = await tables.updateRow<Clients>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const updateClient(id: string, payload: Partial<ClientRecord>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.CLIENTS, id, payload);
-	return res as ClientRecord;
-}
-
-export const deleteClient(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CLIENTS, id);
-}
+export const deleteClient = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENTS,
+		rowId: id,
+	});
+};

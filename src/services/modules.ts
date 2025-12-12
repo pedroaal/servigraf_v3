@@ -1,34 +1,53 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Modules } from "~/types/appwrite";
 
-export const listModules(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.MODULES);
-	let docs = res.documents as Module[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listModules = async (companyId: string) => {
+	const res = await tables.listRows<Modules>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MODULES,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getModule(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.MODULES, id);
-	return res as Module;
-}
+export const getModule = async (id: string) => {
+	const res = await tables.getRow<Modules>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MODULES,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createModule(payload: Partial<Module>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.MODULES,
-		makeId(),
-		payload,
-	);
-	return res as Module;
-}
+export const createModule = async (payload: Modules) => {
+	const res = await tables.createRow<Modules>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MODULES,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateModule(id: string, payload: Partial<Module>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.MODULES, id, payload);
-	return res as Module;
-}
+export const updateModule = async (id: string, payload: Partial<Modules>) => {
+	const res = await tables.updateRow<Modules>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MODULES,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteModule(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.MODULES, id);
-}
+export const deleteModule = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MODULES,
+		rowId: id,
+	});
+};

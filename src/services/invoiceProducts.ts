@@ -1,46 +1,60 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { InvoiceProducts } from "~/types/appwrite";
 
-export const listInvoiceProducts(invoiceId?: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.INVOICE_PRODUCTS);
-	let docs = res.documents as InvoiceProduct[];
-	if (invoiceId) docs = docs.filter((d) => d.invoiceId === invoiceId);
+export const listInvoiceProducts = async (invoiceId?: string) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (invoiceId) queries.push(Query.equal("invoiceId", invoiceId));
+
+	const res = await tables.listRows<InvoiceProducts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_PRODUCTS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getInvoiceProduct(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.INVOICE_PRODUCTS, id);
-	return res as InvoiceProduct;
-}
+export const getInvoiceProduct = async (id: string) => {
+	const res = await tables.getRow<InvoiceProducts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_PRODUCTS,
+		rowId: id,
+	});
+	return res;
+};
 
 /**
  * Use server-side flows to create invoice products (recompute invoice totals atomically).
  * This function remains here for completeness but prefer server-side control.
  */
-export const createInvoiceProduct(payload: Partial<InvoiceProduct>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.INVOICE_PRODUCTS,
-		makeId(),
-		payload,
-	);
-	return res as InvoiceProduct;
-}
+export const createInvoiceProduct = async (payload: InvoiceProducts) => {
+	const res = await tables.createRow<InvoiceProducts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_PRODUCTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateInvoiceProduct(
+export const updateInvoiceProduct = async (
 	id: string,
-	payload: Partial<InvoiceProduct>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.INVOICE_PRODUCTS,
-		id,
-		payload,
-	);
-	return res as InvoiceProduct;
-}
+	payload: Partial<InvoiceProducts>,
+) => {
+	const res = await tables.updateRow<InvoiceProducts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_PRODUCTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteInvoiceProduct(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.INVOICE_PRODUCTS, id);
-}
+export const deleteInvoiceProduct = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_PRODUCTS,
+		rowId: id,
+	});
+};

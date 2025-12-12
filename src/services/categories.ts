@@ -1,49 +1,66 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Categories } from "~/types/appwrite";
 
-export const listCategories(options?: {
-	companyId: string;
-	search?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CATEGORIES);
-	let docs = res.documents as Category[];
+export const listCategories = async (
+	companyId: string,
+	options?: {
+		search?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 
-	if (options?.companyId)
-		docs = docs.filter((c) => c.companyId === options.companyId);
-	if (options?.search) {
-		const q = options.search.toLowerCase();
-		docs = docs.filter((c) => (c.name || "").toLowerCase().includes(q));
-	}
+	if (options?.search) queries.push(Query.equal("name", options.search));
+
+	const res = await tables.listRows<Categories>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CATEGORIES,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getCategory(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CATEGORIES, id);
-	return res as Category;
-}
+export const getCategory = async (id: string) => {
+	const res = await tables.getRow<Categories>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CATEGORIES,
+		rowId: id,
+	});
+	return res as Categories;
+};
 
-export const createCategory(payload: Partial<Category>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CATEGORIES,
-		makeId(),
-		payload,
-	);
-	return res as Category;
-}
+export const createCategory = async (payload: Categories) => {
+	const res = await tables.createRow<Categories>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CATEGORIES,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res as Categories;
+};
 
-export const updateCategory(id: string, payload: Partial<Category>) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.CATEGORIES,
-		id,
-		payload,
-	);
-	return res as Category;
-}
+export const updateCategory = async (
+	id: string,
+	payload: Partial<Categories>,
+) => {
+	const res = await tables.updateRow<Categories>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CATEGORIES,
+		rowId: id,
+		data: payload,
+	});
+	return res as Categories;
+};
 
-export const deleteCategory(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CATEGORIES, id);
-}
+export const deleteCategory = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CATEGORIES,
+		rowId: id,
+	});
+};

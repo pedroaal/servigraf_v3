@@ -1,43 +1,57 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Credentials } from "~/types/appwrite";
 
-export const listCredentials(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CREDENTIALS);
-	let docs = res.documents as Credential[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listCredentials = async (companyId: string) => {
+	const res = await tables.listRows<Credentials>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CREDENTIALS,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getCredential(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CREDENTIALS, id);
-	return res as Credential;
-}
+export const getCredential = async (id: string) => {
+	const res = await tables.getRow<Credentials>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CREDENTIALS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createCredential(payload: Partial<Credential>) {
+export const createCredential = async (payload: Credentials) => {
 	// Expectation: payload.password may be plaintext; Appwrite Function will hash it.
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CREDENTIALS,
-		makeId(),
-		payload,
-	);
-	return res as Credential;
-}
+	const res = await tables.createRow<Credentials>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CREDENTIALS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateCredential(
+export const updateCredential = async (
 	id: string,
-	payload: Partial<Credential>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.CREDENTIALS,
-		id,
-		payload,
-	);
-	return res as Credential;
-}
+	payload: Partial<Credentials>,
+) => {
+	const res = await tables.updateRow<Credentials>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CREDENTIALS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteCredential(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CREDENTIALS, id);
-}
+export const deleteCredential = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CREDENTIALS,
+		rowId: id,
+	});
+};

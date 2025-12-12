@@ -4,14 +4,14 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Attendance } from "~/types/appwrite";
 
 export const listAttendance = async (userId?: string, date?: string) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (userId) queries.push(Query.equal("userId", userId));
+	if (date) queries.push(Query.equal("date", date));
+
 	const res = await tables.listRows<Attendance>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.ATTENDANCE,
-		queries: [
-			Query.equal("deletedAt", false),
-			...(userId ? [Query.equal("userId", userId)] : []),
-			...(date ? [Query.equal("date", date)] : []),
-		],
+		queries,
 	});
 	return res;
 };

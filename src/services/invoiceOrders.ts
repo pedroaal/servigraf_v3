@@ -1,48 +1,61 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { InvoiceWorkOrders } from "~/types/appwrite";
 
-export const listInvoiceOrders(options?: {
+export const listInvoiceOrders = async (options?: {
 	invoiceId?: string;
 	orderId?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.INVOICE_ORDERS);
-	let docs = res.documents as InvoiceOrder[];
+}) => {
+	const queries = [Query.equal("deletedAt", false)];
 	if (options?.invoiceId)
-		docs = docs.filter((d) => d.invoiceId === options.invoiceId);
-	if (options?.orderId)
-		docs = docs.filter((d) => d.orderId === options.orderId);
+		queries.push(Query.equal("invoiceId", options.invoiceId));
+	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
+
+	const res = await tables.listRows<InvoiceWorkOrders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_ORDERS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getInvoiceOrder(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.INVOICE_ORDERS, id);
-	return res as InvoiceOrder;
-}
+export const getInvoiceOrder = async (id: string) => {
+	const res = await tables.getRow<InvoiceWorkOrders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_ORDERS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createInvoiceOrder(payload: Partial<InvoiceOrder>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.INVOICE_ORDERS,
-		makeId(),
-		payload,
-	);
-	return res as InvoiceOrder;
-}
+export const createInvoiceOrder = async (payload: InvoiceWorkOrders) => {
+	const res = await tables.createRow<InvoiceWorkOrders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_ORDERS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateInvoiceOrder(
+export const updateInvoiceOrder = async (
 	id: string,
-	payload: Partial<InvoiceOrder>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.INVOICE_ORDERS,
-		id,
-		payload,
-	);
-	return res as InvoiceOrder;
-}
+	payload: Partial<InvoiceWorkOrders>,
+) => {
+	const res = await tables.updateRow<InvoiceWorkOrders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_ORDERS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteInvoiceOrder(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.INVOICE_ORDERS, id);
-}
+export const deleteInvoiceOrder = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICE_ORDERS,
+		rowId: id,
+	});
+};

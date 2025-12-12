@@ -1,49 +1,61 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { ClientFollowers } from "~/types/appwrite";
 
-export const listClientFollowers(options?: {
+export const listClientFollowers = async (options?: {
 	userId?: string;
 	clientId?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CLIENT_FOLLOWERS);
-	let docs = res.documents as ClientFollower[];
-
-	if (options?.userId) docs = docs.filter((d) => d.userId === options.userId);
+}) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.clientId)
-		docs = docs.filter((d) => d.clientId === options.clientId);
+		queries.push(Query.equal("clientId", options.clientId));
 
+	const res = await tables.listRows<ClientFollowers>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getClientFollower(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CLIENT_FOLLOWERS, id);
-	return res as ClientFollower;
-}
+export const getClientFollower = async (id: string) => {
+	const res = await tables.getRow<ClientFollowers>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createClientFollower(payload: Partial<ClientFollower>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CLIENT_FOLLOWERS,
-		makeId(),
-		payload,
-	);
-	return res as ClientFollower;
-}
+export const createClientFollower = async (payload: ClientFollowers) => {
+	const res = await tables.createRow<ClientFollowers>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateClientFollower(
+export const updateClientFollower = async (
 	id: string,
-	payload: Partial<ClientFollower>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.CLIENT_FOLLOWERS,
-		id,
-		payload,
-	);
-	return res as ClientFollower;
-}
+	payload: Partial<ClientFollowers>,
+) => {
+	const res = await tables.updateRow<ClientFollowers>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteClientFollower(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CLIENT_FOLLOWERS, id);
-}
+export const deleteClientFollower = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: id,
+	});
+};

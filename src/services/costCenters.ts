@@ -1,42 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { CostCenters } from "~/types/appwrite";
 
-export const listCostCenters(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.COST_CENTERS);
-	let docs = res.documents as CostCenter[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listCostCenters = async (companyId: string) => {
+	const res = await tables.listRows<CostCenters>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.COST_CENTERS,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getCostCenter(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.COST_CENTERS, id);
-	return res as CostCenter;
-}
+export const getCostCenter = async (id: string) => {
+	const res = await tables.getRow<CostCenters>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.COST_CENTERS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createCostCenter(payload: Partial<CostCenter>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.COST_CENTERS,
-		makeId(),
-		payload,
-	);
-	return res as CostCenter;
-}
+export const createCostCenter = async (payload: CostCenters) => {
+	const res = await tables.createRow<CostCenters>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.COST_CENTERS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateCostCenter(
+export const updateCostCenter = async (
 	id: string,
-	payload: Partial<CostCenter>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.COST_CENTERS,
-		id,
-		payload,
-	);
-	return res as CostCenter;
-}
+	payload: Partial<CostCenters>,
+) => {
+	const res = await tables.updateRow<CostCenters>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.COST_CENTERS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteCostCenter(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.COST_CENTERS, id);
-}
+export const deleteCostCenter = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.COST_CENTERS,
+		rowId: id,
+	});
+};

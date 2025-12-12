@@ -1,66 +1,78 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Crm } from "~/types/appwrite";
 
-export const listCrm(options?: {
-	companyId: string;
-	assignedId?: string;
-	contactId?: string;
-	status?: boolean;
-	dateFrom?: string;
-	dateTo?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CRM);
-	let docs = res.documents as Crm[];
-
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
+export const listCrm = async (
+	companyId: string,
+	options?: {
+		assignedId?: string;
+		contactId?: string;
+		status?: boolean;
+		dateFrom?: string;
+		dateTo?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 	if (options?.assignedId)
-		docs = docs.filter((d) => d.assignedId === options.assignedId);
+		queries.push(Query.equal("assignedId", options.assignedId));
 	if (options?.contactId)
-		docs = docs.filter((d) => d.contactId === options.contactId);
+		queries.push(Query.equal("contactId", options.contactId));
 	if (typeof options?.status === "boolean")
-		docs = docs.filter((d) => d.status === options.status);
+		queries.push(Query.equal("status", options.status));
 	if (options?.dateFrom)
-		docs = docs.filter(
-			(d) => new Date(d.scheduled) >= new Date(options.dateFrom),
-		);
+		queries.push(Query.greaterThan("scheduled", options.dateFrom));
 	if (options?.dateTo)
-		docs = docs.filter(
-			(d) => new Date(d.scheduled) <= new Date(options.dateTo),
-		);
+		queries.push(Query.lessThan("scheduled", options.dateTo));
 
-	// default: newest scheduled first
-	docs = docs.sort((a, b) =>
-		(b.scheduled ?? "").localeCompare(a.scheduled ?? ""),
-	);
+	const res = await tables.listRows<Crm>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CRM,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getCrm(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CRM, id);
-	return res as Crm;
-}
+export const getCrm = async (id: string) => {
+	const res = await tables.getRow<Crm>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CRM,
+		rowId: id,
+	});
+	return res;
+};
 
 /**
  * Prefer server-side validation and permission checks for CRM modifications.
  */
-export const createCrm(payload: Partial<Crm>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CRM,
-		makeId(),
-		payload,
-	);
-	return res as Crm;
-}
+export const createCrm = async (payload: Crm) => {
+	const res = await tables.createRow<Crm>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CRM,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateCrm(id: string, payload: Partial<Crm>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.CRM, id, payload);
-	return res as Crm;
-}
+export const updateCrm = async (id: string, payload: Partial<Crm>) => {
+	const res = await tables.updateRow<Crm>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CRM,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteCrm(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CRM, id);
-}
+export const deleteCrm = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CRM,
+		rowId: id,
+	});
+};

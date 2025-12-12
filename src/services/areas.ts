@@ -9,14 +9,16 @@ export const listAreas = async (
 		sort?: "asc" | "desc";
 	},
 ) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.sort) queries.push(Query.orderAsc("sortOrder"));
+
 	const res = await tables.listRows<Areas>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.AREAS,
-		queries: [
-			Query.equal("deletedAt", false),
-			Query.equal("companyId", companyId),
-			...(options?.sort ? [Query.orderAsc("sortOrder")] : []),
-		],
+		queries,
 	});
 
 	return res;

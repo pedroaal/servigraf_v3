@@ -1,58 +1,75 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Invoices } from "~/types/appwrite";
 
-export const listInvoices(options?: {
-	companyId: string;
-	clientId?: string;
-	status?: "pending" | "paid";
-	dateFrom?: string; // ISO date inclusive
-	dateTo?: string; // ISO date inclusive
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.INVOICES);
-	let docs = res.documents as Invoice[];
-
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
+export const listInvoices = async (
+	companyId: string,
+	options?: {
+		clientId?: string;
+		status?: "pending" | "paid";
+		dateFrom?: string; // ISO date inclusive
+		dateTo?: string; // ISO date inclusive
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 	if (options?.clientId)
-		docs = docs.filter((d) => d.clientId === options.clientId);
-	if (options?.status) docs = docs.filter((d) => d.status === options.status);
+		queries.push(Query.equal("clientId", options.clientId));
+	if (options?.status) queries.push(Query.equal("status", options.status));
 	if (options?.dateFrom)
-		docs = docs.filter(
-			(d) => new Date(d.issueDate) >= new Date(options.dateFrom),
-		);
+		queries.push(Query.greaterThan("$createdAt", options.dateFrom));
 	if (options?.dateTo)
-		docs = docs.filter(
-			(d) => new Date(d.issueDate) <= new Date(options.dateTo),
-		);
+		queries.push(Query.lessThan("$createdAt", options.dateTo));
+
+	const res = await tables.listRows<Invoices>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICES,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getInvoice(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.INVOICES, id);
-	return res as Invoice;
-}
+export const getInvoice = async (id: string) => {
+	const res = await tables.getRow<Invoices>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICES,
+		rowId: id,
+	});
+	return res;
+};
 
 /**
  * Use server-side flow for assigning invoiceNumber.
  * This client function will simply attempt creation with provided payload.
  */
-export const createInvoice(payload: Partial<Invoice>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.INVOICES,
-		makeId(),
-		payload,
-	);
-	return res as Invoice;
-}
+export const createInvoice = async (payload: Invoices) => {
+	const res = await tables.createRow<Invoices>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICES,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateInvoice(id: string, payload: Partial<Invoice>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.INVOICES, id, payload);
-	return res as Invoice;
-}
+export const updateInvoice = async (id: string, payload: Partial<Invoices>) => {
+	const res = await tables.updateRow<Invoices>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICES,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteInvoice(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.INVOICES, id);
-}
+export const deleteInvoice = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.INVOICES,
+		rowId: id,
+	});
+};

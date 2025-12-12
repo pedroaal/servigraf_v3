@@ -10,17 +10,19 @@ export const listActivities = async (
 		followUp?: boolean;
 	},
 ) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.canEvaluate)
+		queries.push(Query.equal("canEvaluate", options.canEvaluate));
+	if (options?.followUp)
+		queries.push(Query.equal("followUp", options.followUp));
+
 	const res = await tables.listRows<Activities>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.ACTIVITIES,
-		queries: [
-			Query.equal("deletedAt", false),
-			Query.equal("companyId", companyId),
-			...(options?.canEvaluate
-				? [Query.equal("canEvaluate", options.canEvaluate)]
-				: []),
-			...(options?.followUp ? [Query.equal("followUp", options.followUp)] : []),
-		],
+		queries,
 	});
 	return res;
 };

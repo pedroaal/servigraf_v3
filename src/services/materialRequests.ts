@@ -1,51 +1,61 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { MaterialRequests } from "~/types/appwrite";
 
-export const listMaterialRequests(options?: {
+export const listMaterialRequests = async (options?: {
 	orderId?: string;
 	supplierId?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.MATERIAL_REQUESTS);
-	let docs = res.documents as MaterialRequest[];
-
-	if (options?.orderId)
-		docs = docs.filter((d) => d.orderId === options.orderId);
+}) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
 	if (options?.supplierId)
-		docs = docs.filter((d) => d.supplierId === options.supplierId);
+		queries.push(Query.equal("supplierId", options.supplierId));
 
+	const res = await tables.listRows<MaterialRequests>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MATERIAL_REQUESTS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getMaterialRequest(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.MATERIAL_REQUESTS, id);
-	return res as MaterialRequest;
-}
+export const getMaterialRequest = async (id: string) => {
+	const res = await tables.getRow<MaterialRequests>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MATERIAL_REQUESTS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createMaterialRequest(payload: Partial<MaterialRequest>) {
-	// Validate payload.quantity, total and numeric ranges on server-side if required
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.MATERIAL_REQUESTS,
-		makeId(),
-		payload,
-	);
-	return res as MaterialRequest;
-}
+export const createMaterialRequest = async (payload: MaterialRequests) => {
+	const res = await tables.createRow<MaterialRequests>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MATERIAL_REQUESTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateMaterialRequest(
+export const updateMaterialRequest = async (
 	id: string,
-	payload: Partial<MaterialRequest>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.MATERIAL_REQUESTS,
-		id,
-		payload,
-	);
-	return res as MaterialRequest;
-}
+	payload: Partial<MaterialRequests>,
+) => {
+	const res = await tables.updateRow<MaterialRequests>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MATERIAL_REQUESTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteMaterialRequest(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.MATERIAL_REQUESTS, id);
-}
+export const deleteMaterialRequest = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.MATERIAL_REQUESTS,
+		rowId: id,
+	});
+};

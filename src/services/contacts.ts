@@ -1,53 +1,66 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Contacts } from "~/types/appwrite";
 
-export const listContacts(options?: {
-	companyId: string;
-	clientcompanyId: string;
-	searchName?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.CONTACTS);
-	let docs = res.documents as Contact[];
+export const listContacts = async (
+	companyId: string,
+	options?: {
+		clientCompanyId?: string;
+		searchName?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.clientCompanyId)
+		queries.push(Query.equal("clientCompanyId", options.clientCompanyId));
+	if (options?.searchName)
+		queries.push(Query.equal("name", options.searchName));
 
-	if (options?.companyId) {
-		docs = docs.filter((d) => d.companyId === options.companyId);
-	}
-	if (options?.clientCompanyId) {
-		docs = docs.filter((d) => d.clientCompanyId === options.clientCompanyId);
-	}
-	if (options?.searchName) {
-		const q = options.searchName.toLowerCase();
-		docs = docs.filter(
-			(d) =>
-				(d.firstName || "").toLowerCase().includes(q) ||
-				(d.lastName || "").toLowerCase().includes(q),
-		);
-	}
+	const res = await tables.listRows<Contacts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CONTACTS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getContact(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.CONTACTS, id);
-	return res as Contact;
-}
+export const getContact = async (id: string) => {
+	const res = await tables.getRow<Contacts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CONTACTS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createContact(payload: Partial<Contact>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.CONTACTS,
-		makeId(),
-		payload,
-	);
-	return res as Contact;
-}
+export const createContact = async (payload: Contacts) => {
+	const res = await tables.createRow<Contacts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CONTACTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateContact(id: string, payload: Partial<Contact>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.CONTACTS, id, payload);
-	return res as Contact;
-}
+export const updateContact = async (id: string, payload: Partial<Contacts>) => {
+	const res = await tables.updateRow<Contacts>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CONTACTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteContact(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.CONTACTS, id);
-}
+export const deleteContact = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CONTACTS,
+		rowId: id,
+	});
+};
