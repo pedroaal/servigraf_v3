@@ -334,7 +334,7 @@ export type Clients = Models.Row & {
     deletedAt: string | null;
 }
 
-export type ClientFollowers = Models.Row & {
+export type UserClients = Models.Row & {
     userId: Users[];
     clientId: Clients[];
     deletedAt: string | null;

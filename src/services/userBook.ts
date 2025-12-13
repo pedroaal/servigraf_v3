@@ -24,6 +24,9 @@ export const getUserBook = async (id: string) => {
 	return res;
 };
 
+/**
+ * Prefer server-side operations for linking books to users (role enforcement).
+ */
 export const createUserBook = async (payload: UserBook) => {
 	const res = await tables.createRow<UserBook>({
 		databaseId: DATABASE_ID,

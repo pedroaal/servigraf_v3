@@ -39,19 +39,6 @@ export const createUserProcess = async (payload: UserProcesses) => {
 	return res;
 };
 
-export const updateUserProcess = async (
-	id: string,
-	payload: Partial<UserProcesses>,
-) => {
-	const res = await tables.updateRow<UserProcesses>({
-		databaseId: DATABASE_ID,
-		tableId: TABLES.USER_PROCESSES,
-		rowId: id,
-		data: payload,
-	});
-	return res;
-};
-
 export const deleteUserProcess = (id: string) => {
 	return tables.deleteRow({
 		databaseId: DATABASE_ID,
