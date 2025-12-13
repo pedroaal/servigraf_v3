@@ -1,44 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { PayrollEducation } from "~/types/appwrite";
 
-export const listPayrollEducation(payrollId?: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.PAYROLL_EDUCATION);
-	let docs = res.documents as PayrollEducation[];
-	if (payrollId) docs = docs.filter((d) => d.payrollId === payrollId);
+export const listPayrollEducation = async (payrollId?: string) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (payrollId) queries.push(Query.equal("payrollId", payrollId));
+
+	const res = await tables.listRows<PayrollEducation>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_EDUCATION,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getPayrollEducation(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.PAYROLL_EDUCATION, id);
-	return res as PayrollEducation;
-}
+export const getPayrollEducation = async (id: string) => {
+	const res = await tables.getRow<PayrollEducation>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_EDUCATION,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createPayrollEducation(
-	payload: Partial<PayrollEducation>,
-) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.PAYROLL_EDUCATION,
-		makeId(),
-		payload,
-	);
-	return res as PayrollEducation;
-}
+export const createPayrollEducation = async (payload: PayrollEducation) => {
+	const res = await tables.createRow<PayrollEducation>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_EDUCATION,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updatePayrollEducation(
+export const updatePayrollEducation = async (
 	id: string,
 	payload: Partial<PayrollEducation>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.PAYROLL_EDUCATION,
-		id,
-		payload,
-	);
-	return res as PayrollEducation;
-}
+) => {
+	const res = await tables.updateRow<PayrollEducation>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_EDUCATION,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deletePayrollEducation(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.PAYROLL_EDUCATION, id);
-}
+export const deletePayrollEducation = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_EDUCATION,
+		rowId: id,
+	});
+};

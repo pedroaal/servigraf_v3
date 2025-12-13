@@ -1,35 +1,53 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Users } from "~/types/appwrite";
 
-export const listUsers(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.USERS);
-	let docs = res.documents as AppUser[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listUsers = async (companyId: string) => {
+	const res = await tables.listRows<Users>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USERS,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getUser(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.USERS, id);
-	return res as AppUser;
-}
+export const getUser = async (id: string) => {
+	const res = await tables.getRow<Users>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USERS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createUser(payload: Partial<AppUser>) {
-	// Use with caution on client; prefer server-side operations for sensitive fields.
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.USERS,
-		makeId(),
-		payload,
-	);
-	return res as AppUser;
-}
+export const createUser = async (payload: Users) => {
+	const res = await tables.createRow<Users>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USERS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateUser(id: string, payload: Partial<AppUser>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.USERS, id, payload);
-	return res as AppUser;
-}
+export const updateUser = async (id: string, payload: Partial<Users>) => {
+	const res = await tables.updateRow<Users>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USERS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteUser(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.USERS, id);
-}
+export const deleteUser = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USERS,
+		rowId: id,
+	});
+};

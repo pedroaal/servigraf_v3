@@ -1,34 +1,53 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Profiles } from "~/types/appwrite";
 
-export const listProfiles(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.PROFILES);
-	let docs = res.documents as Profile[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listProfiles = async (companyId: string) => {
+	const res = await tables.listRows<Profiles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PROFILES,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getProfile(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.PROFILES, id);
-	return res as Profile;
-}
+export const getProfile = async (id: string) => {
+	const res = await tables.getRow<Profiles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PROFILES,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createProfile(payload: Partial<Profile>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.PROFILES,
-		makeId(),
-		payload,
-	);
-	return res as Profile;
-}
+export const createProfile = async (payload: Profiles) => {
+	const res = await tables.createRow<Profiles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PROFILES,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateProfile(id: string, payload: Partial<Profile>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.PROFILES, id, payload);
-	return res as Profile;
-}
+export const updateProfile = async (id: string, payload: Partial<Profiles>) => {
+	const res = await tables.updateRow<Profiles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PROFILES,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteProfile(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.PROFILES, id);
-}
+export const deleteProfile = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PROFILES,
+		rowId: id,
+	});
+};

@@ -1,55 +1,72 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Orders } from "~/types/appwrite";
 
-export const listOrders(options?: {
-	companyId: string;
-	userId?: string;
-	clientId?: string;
-	status?: string;
-	dateFrom?: string; // ISO date string (inclusive)
-	dateTo?: string; // ISO date string (inclusive)
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.ORDERS);
-	let docs = res.documents as Order[];
-
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
-	if (options?.userId) docs = docs.filter((d) => d.userId === options.userId);
+export const listOrders = async (
+	companyId: string,
+	options?: {
+		userId?: string;
+		clientId?: string;
+		status?: string;
+		dateFrom?: string;
+		dateTo?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.clientId)
-		docs = docs.filter((d) => d.clientId === options.clientId);
-	if (options?.status) docs = docs.filter((d) => d.status === options.status);
+		queries.push(Query.equal("clientId", options.clientId));
+	if (options?.status) queries.push(Query.equal("status", options.status));
 	if (options?.dateFrom)
-		docs = docs.filter(
-			(d) => new Date(d.startDate) >= new Date(options.dateFrom),
-		);
-	if (options?.dateTo)
-		docs = docs.filter((d) => new Date(d.endDate) <= new Date(options.dateTo));
+		queries.push(Query.greaterThan("startDate", options.dateFrom));
+	if (options?.dateTo) queries.push(Query.lessThan("endDate", options.dateTo));
+
+	const res = await tables.listRows<Orders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDERS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getOrder(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.ORDERS, id);
-	return res as Order;
-}
+export const getOrder = async (id: string) => {
+	const res = await tables.getRow<Orders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDERS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createOrder(payload: Partial<Order>) {
-	// Note: orderNumber may need server-side sequencing; consider creating via server API to guarantee uniqueness.
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.ORDERS,
-		makeId(),
-		payload,
-	);
-	return res as Order;
-}
+export const createOrder = async (payload: Orders) => {
+	const res = await tables.createRow<Orders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDERS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateOrder(id: string, payload: Partial<Order>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.ORDERS, id, payload);
-	return res as Order;
-}
+export const updateOrder = async (id: string, payload: Partial<Orders>) => {
+	const res = await tables.updateRow<Orders>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDERS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteOrder(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.ORDERS, id);
-}
+export const deleteOrder = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDERS,
+		rowId: id,
+	});
+};

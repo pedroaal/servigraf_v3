@@ -27,6 +27,15 @@ export const listClients = async (
 	return res;
 };
 
+export const getClient = async (id: string) => {
+	const res = await tables.getRow<Clients>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: id,
+	});
+	return res;
+};
+
 export const createClient = async (payload: Clients) => {
 	const res = await tables.createRow<Clients>({
 		databaseId: DATABASE_ID,

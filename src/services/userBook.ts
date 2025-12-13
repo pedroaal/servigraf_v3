@@ -1,42 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { UserBook } from "~/types/appwrite";
 
-export const listUserBooks(userId?: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.USER_BOOK);
-	let docs = res.documents as UserBook[];
-	if (userId) docs = docs.filter((d) => d.userId === userId);
+export const listUserBooks = async (userId?: string) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (userId) queries.push(Query.equal("userId", userId));
+
+	const res = await tables.listRows<UserBook>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USER_BOOK,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getUserBook(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.USER_BOOK, id);
-	return res as UserBook;
-}
+export const getUserBook = async (id: string) => {
+	const res = await tables.getRow<UserBook>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USER_BOOK,
+		rowId: id,
+	});
+	return res;
+};
 
-/**
- * Prefer server-side operations for linking books to users (role enforcement).
- */
-export const createUserBook(payload: Partial<UserBook>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.USER_BOOK,
-		makeId(),
-		payload,
-	);
-	return res as UserBook;
-}
+export const createUserBook = async (payload: UserBook) => {
+	const res = await tables.createRow<UserBook>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USER_BOOK,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateUserBook(id: string, payload: Partial<UserBook>) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.USER_BOOK,
-		id,
-		payload,
-	);
-	return res as UserBook;
-}
+export const updateUserBook = async (
+	id: string,
+	payload: Partial<UserBook>,
+) => {
+	const res = await tables.updateRow<UserBook>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USER_BOOK,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteUserBook(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.USER_BOOK, id);
-}
+export const deleteUserBook = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.USER_BOOK,
+		rowId: id,
+	});
+};

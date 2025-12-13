@@ -37,9 +37,6 @@ export const getComment = async (id: string) => {
 	return res;
 };
 
-/**
- * Use server-side moderation if needed. This is a direct create helper.
- */
 export const createComment = async (payload: Comments) => {
 	const res = await tables.createRow<Comments>({
 		databaseId: DATABASE_ID,

@@ -1,51 +1,65 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Products } from "~/types/appwrite";
 
-export const listProducts(options?: {
-	companyId: string;
-	categoryId?: string;
-	search?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.PRODUCTS);
-	let docs = res.documents as Product[];
-
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
+export const listProducts = async (
+	companyId: string,
+	options?: {
+		categoryId?: string;
+		search?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
 	if (options?.categoryId)
-		docs = docs.filter((d) => d.categoryId === options.categoryId);
-	if (options?.search) {
-		const q = options.search.toLowerCase();
-		docs = docs.filter(
-			(d) =>
-				(d.name || "").toLowerCase().includes(q) ||
-				(d.description || "").toLowerCase().includes(q),
-		);
-	}
+		queries.push(Query.equal("categoryId", options.categoryId));
+	if (options?.search) queries.push(Query.equal("name", options.search));
+
+	const res = await tables.listRows<Products>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PRODUCTS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getProduct(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.PRODUCTS, id);
-	return res as Product;
-}
+export const getProduct = async (id: string) => {
+	const res = await tables.getRow<Products>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PRODUCTS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createProduct(payload: Partial<Product>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.PRODUCTS,
-		makeId(),
-		payload,
-	);
-	return res as Product;
-}
+export const createProduct = async (payload: Products) => {
+	const res = await tables.createRow<Products>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PRODUCTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateProduct(id: string, payload: Partial<Product>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.PRODUCTS, id, payload);
-	return res as Product;
-}
+export const updateProduct = async (id: string, payload: Partial<Products>) => {
+	const res = await tables.updateRow<Products>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PRODUCTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteProduct(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.PRODUCTS, id);
-}
+export const deleteProduct = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PRODUCTS,
+		rowId: id,
+	});
+};

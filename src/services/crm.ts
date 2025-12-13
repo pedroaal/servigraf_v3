@@ -46,9 +46,6 @@ export const getCrm = async (id: string) => {
 	return res;
 };
 
-/**
- * Prefer server-side validation and permission checks for CRM modifications.
- */
 export const createCrm = async (payload: Crm) => {
 	const res = await tables.createRow<Crm>({
 		databaseId: DATABASE_ID,

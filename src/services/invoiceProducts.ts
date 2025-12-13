@@ -24,10 +24,6 @@ export const getInvoiceProduct = async (id: string) => {
 	return res;
 };
 
-/**
- * Use server-side flows to create invoice products (recompute invoice totals atomically).
- * This function remains here for completeness but prefer server-side control.
- */
 export const createInvoiceProduct = async (payload: InvoiceProducts) => {
 	const res = await tables.createRow<InvoiceProducts>({
 		databaseId: DATABASE_ID,

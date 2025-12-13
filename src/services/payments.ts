@@ -1,48 +1,63 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Payments } from "~/types/appwrite";
 
-export const listPayments(options?: {
+export const listPayments = async (options?: {
 	orderId?: string;
 	userId?: string;
 	dateFrom?: string;
 	dateTo?: string;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.PAYMENTS);
-	let docs = res.documents as Payment[];
-
-	if (options?.orderId)
-		docs = docs.filter((d) => d.orderId === options.orderId);
-	if (options?.userId) docs = docs.filter((d) => d.userId === options.userId);
+}) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
+	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.dateFrom)
-		docs = docs.filter((d) => new Date(d.date) >= new Date(options.dateFrom));
-	if (options?.dateTo)
-		docs = docs.filter((d) => new Date(d.date) <= new Date(options.dateTo));
+		queries.push(Query.greaterThan("date", options.dateFrom));
+	if (options?.dateTo) queries.push(Query.lessThan("date", options.dateTo));
+
+	const res = await tables.listRows<Payments>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYMENTS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getPayment(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.PAYMENTS, id);
-	return res as Payment;
-}
+export const getPayment = async (id: string) => {
+	const res = await tables.getRow<Payments>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYMENTS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createPayment(payload: Partial<Payment>) {
-	// Server-side validation recommended (amount > 0, order exists, permission checks)
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.PAYMENTS,
-		makeId(),
-		payload,
-	);
-	return res as Payment;
-}
+export const createPayment = async (payload: Payments) => {
+	const res = await tables.createRow<Payments>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYMENTS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updatePayment(id: string, payload: Partial<Payment>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.PAYMENTS, id, payload);
-	return res as Payment;
-}
+export const updatePayment = async (id: string, payload: Partial<Payments>) => {
+	const res = await tables.updateRow<Payments>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYMENTS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deletePayment(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.PAYMENTS, id);
-}
+export const deletePayment = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYMENTS,
+		rowId: id,
+	});
+};

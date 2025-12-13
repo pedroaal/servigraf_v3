@@ -9,9 +9,6 @@ export interface ModalProps {
 	children: JSX.Element;
 }
 
-/**
- * Modal component that renders in a Portal
- */
 export const Modal: ParentComponent<ModalProps> = (props) => {
 	const [store, { closeModal }] = useContext(PortalContext);
 
@@ -39,9 +36,6 @@ export const Modal: ParentComponent<ModalProps> = (props) => {
 	);
 };
 
-/**
- * Confirmation Modal
- */
 export interface ConfirmModalProps {
 	title?: string;
 	message: string;

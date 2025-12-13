@@ -1,32 +1,48 @@
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Roles } from "~/types/appwrite";
 
-export const listRoles() {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.ROLES);
-	return res.documents as Role[];
-}
+export const listRoles = async () => {
+	const res = await tables.listRows<Roles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ROLES,
+	});
+	return res;
+};
 
-export const getRole(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.ROLES, id);
-	return res as Role;
-}
+export const getRole = async (id: string) => {
+	const res = await tables.getRow<Roles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ROLES,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createRole(payload: Partial<Role>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.ROLES,
-		makeId(),
-		payload,
-	);
-	return res as Role;
-}
+export const createRole = async (payload: Roles) => {
+	const res = await tables.createRow<Roles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ROLES,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateRole(id: string, payload: Partial<Role>) {
-	const res = await tables.updateRow<>(DATABASE_ID, TABLES.ROLES, id, payload);
-	return res as Role;
-}
+export const updateRole = async (id: string, payload: Partial<Roles>) => {
+	const res = await tables.updateRow<Roles>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ROLES,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteRole(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.ROLES, id);
-}
+export const deleteRole = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ROLES,
+		rowId: id,
+	});
+};

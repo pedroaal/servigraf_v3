@@ -36,9 +36,6 @@ export const getActivity = async (id: string) => {
 	return res;
 };
 
-/**
- * Creation of templates or activities may require validation. Use server-side control when needed.
- */
 export const createActivity = async (payload: Activities) => {
 	const res = await tables.createRow<Activities>({
 		databaseId: DATABASE_ID,
@@ -49,11 +46,14 @@ export const createActivity = async (payload: Activities) => {
 	return res;
 };
 
-export const updateActivity = async (payload: Partial<Activities>) => {
+export const updateActivity = async (
+	id: string,
+	payload: Partial<Activities>,
+) => {
 	const res = await tables.updateRow<Activities>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.ACTIVITIES,
-		rowId: makeId(),
+		rowId: id,
 		data: payload,
 	});
 	return res;

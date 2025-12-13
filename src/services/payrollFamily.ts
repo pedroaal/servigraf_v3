@@ -1,42 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { PayrollFamily } from "~/types/appwrite";
 
-export const listPayrollFamily(payrollId?: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.PAYROLL_FAMILY);
-	let docs = res.documents as PayrollFamily[];
-	if (payrollId) docs = docs.filter((d) => d.payrollId === payrollId);
+export const listPayrollFamily = async (payrollId?: string) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (payrollId) queries.push(Query.equal("payrollId", payrollId));
+
+	const res = await tables.listRows<PayrollFamily>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_FAMILY,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getPayrollFamily(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.PAYROLL_FAMILY, id);
-	return res as PayrollFamily;
-}
+export const getPayrollFamily = async (id: string) => {
+	const res = await tables.getRow<PayrollFamily>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_FAMILY,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createPayrollFamily(payload: Partial<PayrollFamily>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.PAYROLL_FAMILY,
-		makeId(),
-		payload,
-	);
-	return res as PayrollFamily;
-}
+export const createPayrollFamily = async (payload: PayrollFamily) => {
+	const res = await tables.createRow<PayrollFamily>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_FAMILY,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updatePayrollFamily(
+export const updatePayrollFamily = async (
 	id: string,
 	payload: Partial<PayrollFamily>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.PAYROLL_FAMILY,
-		id,
-		payload,
-	);
-	return res as PayrollFamily;
-}
+) => {
+	const res = await tables.updateRow<PayrollFamily>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_FAMILY,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deletePayrollFamily(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.PAYROLL_FAMILY, id);
-}
+export const deletePayrollFamily = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.PAYROLL_FAMILY,
+		rowId: id,
+	});
+};

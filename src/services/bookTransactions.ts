@@ -6,8 +6,8 @@ import type { BookTransactions } from "~/types/appwrite";
 export const listBookTransactions = async (
 	companyId: string,
 	options?: {
-		dateFrom?: string; // ISO
-		dateTo?: string; // ISO
+		dateFrom?: string;
+		dateTo?: string;
 		transactionType?: boolean;
 	},
 ) => {
@@ -39,9 +39,6 @@ export const getBookTransaction = async (id: string) => {
 	return res;
 };
 
-/**
- * Use server-side flows to ensure ledger consistency. The direct create below is provided for completeness.
- */
 export const createBookTransaction = async (payload: BookTransactions) => {
 	const res = await tables.createRow<BookTransactions>({
 		databaseId: DATABASE_ID,

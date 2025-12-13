@@ -1,42 +1,56 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Withholdings } from "~/types/appwrite";
 
-export const listWithholdings(companyId: string) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.WITHHOLDINGS);
-	let docs = res.documents as Withholding[];
-	if (companyId) docs = docs.filter((d) => d.companyId === companyId);
+export const listWithholdings = async (companyId: string) => {
+	const res = await tables.listRows<Withholdings>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.WITHHOLDINGS,
+		queries: [
+			Query.equal("deletedAt", false),
+			Query.equal("companyId", companyId),
+		],
+	});
 	return res;
-}
+};
 
-export const getWithholding(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.WITHHOLDINGS, id);
-	return res as Withholding;
-}
+export const getWithholding = async (id: string) => {
+	const res = await tables.getRow<Withholdings>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.WITHHOLDINGS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createWithholding(payload: Partial<Withholding>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.WITHHOLDINGS,
-		makeId(),
-		payload,
-	);
-	return res as Withholding;
-}
+export const createWithholding = async (payload: Withholdings) => {
+	const res = await tables.createRow<Withholdings>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.WITHHOLDINGS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateWithholding(
+export const updateWithholding = async (
 	id: string,
-	payload: Partial<Withholding>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.WITHHOLDINGS,
-		id,
-		payload,
-	);
-	return res as Withholding;
-}
+	payload: Partial<Withholdings>,
+) => {
+	const res = await tables.updateRow<Withholdings>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.WITHHOLDINGS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteWithholding(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.WITHHOLDINGS, id);
-}
+export const deleteWithholding = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.WITHHOLDINGS,
+		rowId: id,
+	});
+};

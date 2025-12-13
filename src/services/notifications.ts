@@ -1,59 +1,67 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { Notifications } from "~/types/appwrite";
 
-export const listNotifications(options?: {
-	companyId: string;
-	userId?: string;
-	unreadOnly?: boolean;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.NOTIFICATIONS);
-	let docs = res.documents as Notification[];
+export const listNotifications = async (
+	companyId: string,
+	options?: {
+		userId?: string;
+		unreadOnly?: boolean;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.userId) queries.push(Query.equal("userId", options.userId));
+	if (options?.unreadOnly) queries.push(Query.isNull("readAt"));
 
-	if (options?.companyId)
-		docs = docs.filter((d) => d.companyId === options.companyId);
-	if (options?.userId) docs = docs.filter((d) => d.userId === options.userId);
-	if (options?.unreadOnly) docs = docs.filter((d) => !d.readAt);
-
-	// newest first
-	docs = docs.sort((a, b) =>
-		(b.$createdAt ?? "").localeCompare(a.$createdAt ?? ""),
-	);
+	const res = await tables.listRows<Notifications>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.NOTIFICATIONS,
+		queries,
+	});
 
 	return res;
-}
+};
 
-export const getNotification(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.NOTIFICATIONS, id);
-	return res as Notification;
-}
+export const getNotification = async (id: string) => {
+	const res = await tables.getRow<Notifications>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.CLIENT_FOLLOWERS,
+		rowId: id,
+	});
+	return res;
+};
 
-/**
- * Prefer server-side route or Appwrite Function for create/update of notifications.
- */
-export const createNotification(payload: Partial<Notification>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.NOTIFICATIONS,
-		makeId(),
-		payload,
-	);
-	return res as Notification;
-}
+export const createNotification = async (payload: Notifications) => {
+	const res = await tables.createRow<Notifications>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.NOTIFICATIONS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateNotification(
+export const updateNotification = async (
 	id: string,
-	payload: Partial<Notification>,
-) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.NOTIFICATIONS,
-		id,
-		payload,
-	);
-	return res as Notification;
-}
+	payload: Notifications,
+) => {
+	const res = await tables.updateRow<Notifications>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.NOTIFICATIONS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteNotification(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.NOTIFICATIONS, id);
-}
+export const deleteNotification = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.NOTIFICATIONS,
+		rowId: id,
+	});
+};

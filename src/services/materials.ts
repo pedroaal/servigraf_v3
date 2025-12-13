@@ -36,7 +36,7 @@ export const getMaterial = async (id: string) => {
 	return res;
 };
 
-export const createMaterial = async (payload: Partial<Materials>) => {
+export const createMaterial = async (payload: Materials) => {
 	const res = await tables.createRow<Materials>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.MATERIALS,

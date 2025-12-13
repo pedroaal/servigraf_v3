@@ -24,9 +24,6 @@ export const getBookReference = async (id: string) => {
 	return res;
 };
 
-/**
- * Use with caution on client. For production prefer server-side flow that enforces permissions.
- */
 export const createBookReference = async (payload: BookReferences) => {
 	const res = await tables.createRow<BookReferences>({
 		databaseId: DATABASE_ID,

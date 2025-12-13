@@ -1,49 +1,63 @@
+import { Query } from "appwrite";
 import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
-import type { AccountingBook } from "~/types/appwrite";
+import type { OrderInks } from "~/types/appwrite";
 
-export const listOrderInks(options?: {
+export const listOrderInks = async (options?: {
 	orderId?: string;
 	inkId?: string;
 	side?: boolean;
-}) {
-	const res = await tables.listRows<>(DATABASE_ID, TABLES.ORDER_INKS);
-	let docs = res.documents as OrderInk[];
+}) => {
+	const queries = [Query.equal("deletedAt", false)];
+	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
+	if (options?.inkId) queries.push(Query.equal("inkId", options.inkId));
+	if (options?.side !== undefined)
+		queries.push(Query.equal("side", options.side));
 
-	if (options?.orderId)
-		docs = docs.filter((d) => d.orderId === options.orderId);
-	if (options?.inkId) docs = docs.filter((d) => d.inkId === options.inkId);
-	if (typeof options?.side === "boolean")
-		docs = docs.filter((d) => d.side === options.side);
-
+	const res = await tables.listRows<OrderInks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDER_INKS,
+		queries,
+	});
 	return res;
-}
+};
 
-export const getOrderInk(id: string) {
-	const res = await tables.getRow<>(DATABASE_ID, TABLES.ORDER_INKS, id);
-	return res as OrderInk;
-}
+export const getOrderInk = async (id: string) => {
+	const res = await tables.getRow<OrderInks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDER_INKS,
+		rowId: id,
+	});
+	return res;
+};
 
-export const createOrderInk(payload: Partial<OrderInk>) {
-	const res = await tables.createRow<>(
-		DATABASE_ID,
-		TABLES.ORDER_INKS,
-		makeId(),
-		payload,
-	);
-	return res as OrderInk;
-}
+export const createOrderInk = async (payload: OrderInks) => {
+	const res = await tables.createRow<OrderInks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDER_INKS,
+		rowId: makeId(),
+		data: payload,
+	});
+	return res;
+};
 
-export const updateOrderInk(id: string, payload: Partial<OrderInk>) {
-	const res = await tables.updateRow<>(
-		DATABASE_ID,
-		TABLES.ORDER_INKS,
-		id,
-		payload,
-	);
-	return res as OrderInk;
-}
+export const updateOrderInk = async (
+	id: string,
+	payload: Partial<OrderInks>,
+) => {
+	const res = await tables.updateRow<OrderInks>({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDER_INKS,
+		rowId: id,
+		data: payload,
+	});
+	return res;
+};
 
-export const deleteOrderInk(id: string) {
-	return tables.deleteRow(DATABASE_ID, TABLES.ORDER_INKS, id);
-}
+export const deleteOrderInk = (id: string) => {
+	return tables.deleteRow({
+		databaseId: DATABASE_ID,
+		tableId: TABLES.ORDER_INKS,
+		rowId: id,
+	});
+};

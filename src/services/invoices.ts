@@ -8,8 +8,8 @@ export const listInvoices = async (
 	options?: {
 		clientId?: string;
 		status?: "pending" | "paid";
-		dateFrom?: string; // ISO date inclusive
-		dateTo?: string; // ISO date inclusive
+		dateFrom?: string;
+		dateTo?: string;
 	},
 ) => {
 	const queries = [
@@ -42,10 +42,6 @@ export const getInvoice = async (id: string) => {
 	return res;
 };
 
-/**
- * Use server-side flow for assigning invoiceNumber.
- * This client function will simply attempt creation with provided payload.
- */
 export const createInvoice = async (payload: Invoices) => {
 	const res = await tables.createRow<Invoices>({
 		databaseId: DATABASE_ID,
