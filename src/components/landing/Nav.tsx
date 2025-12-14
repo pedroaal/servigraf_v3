@@ -1,10 +1,10 @@
 import { A, useLocation } from "@solidjs/router";
-import { createSignal, For, Show } from "solid-js";
+import { FaSolidBars } from "solid-icons/fa";
+import { For } from "solid-js";
 
 const Nav = () => {
 	const location = useLocation();
-
-	const [isMenuOpen, setIsMenuOpen] = createSignal(false);
+	const current = (path: string) => path === location.pathname;
 
 	const menuItems = [
 		{ id: "/about", label: "Sobre Nosotros" },
@@ -14,14 +14,11 @@ const Nav = () => {
 		{ id: "/login", label: "Login" },
 	];
 
-	const activeClass = (path: string) =>
-		path == location.pathname ? "text-white" : "text-gray-800";
-
 	return (
-		<div class="navbar sticky top-0 z-50 px-4 lg:px-8">
+		<div class="navbar bg-base-100 sticky top-0 z-50 px-4 lg:px-8">
 			<div class="navbar-start">
 				<A
-					class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold"
+					class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-content font-bold"
 					href="/"
 				>
 					SG
@@ -33,8 +30,13 @@ const Nav = () => {
 				<ul class="menu menu-horizontal px-1 hidden lg:flex">
 					<For each={menuItems}>
 						{(item) => (
-							<li>
-								<A class={`${activeClass(item.id)}`} href={item.id}>
+							<li classList={{ "menu-disabled": current(item.id) }}>
+								<A
+									classList={{
+										"text-primary focus:text-neutral-content": current(item.id),
+									}}
+									href={item.id}
+								>
 									{item.label}
 								</A>
 							</li>
@@ -44,43 +46,30 @@ const Nav = () => {
 
 				{/* Mobile Menu Button */}
 				<div class="dropdown dropdown-end lg:hidden">
-					<label
-						tabindex="0"
-						class={`btn btn-ghost ${activeClass("/")}`}
-						type="button"
-						onClick={() => setIsMenuOpen((state) => !state)}
+					<div tabindex="0" role="button" class="btn btn-square btn-ghost">
+						<FaSolidBars size={24} />
+					</div>
+					<ul
+						tabindex="-1"
+						class="menu menu-compact dropdown-content mt-2 p-2 shadow bg-base-100 rounded-box w-52"
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							/>
-						</svg>
-					</label>
-					<Show when={isMenuOpen()}>
-						<ul
-							tabindex="0"
-							class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-						>
-							<For each={menuItems}>
-								{(item) => (
-									<li>
-										<A class={`${activeClass(item.id)}`} href={item.id}>
-											{item.label}
-										</A>
-									</li>
-								)}
-							</For>
-						</ul>
-					</Show>
+						<For each={menuItems}>
+							{(item) => (
+								<li classList={{ "menu-disabled": current(item.id) }}>
+									<A
+										classList={{
+											"text-primary focus:text-neutral-content": current(
+												item.id,
+											),
+										}}
+										href={item.id}
+									>
+										{item.label}
+									</A>
+								</li>
+							)}
+						</For>
+					</ul>
 				</div>
 			</div>
 		</div>
