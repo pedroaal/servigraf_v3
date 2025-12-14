@@ -24,7 +24,7 @@ const App: Component = () => {
 					<Meta name="author" content="Pedro Altamirano" />
 					<Meta name="description" content="Grafos" />
 					<Meta property="og:image" content="/favicon.ico" />
-					<Meta property="og:image:alt" content="Pedro Altamirano" />
+					<Meta property="og:image:alt" content="Grafos logo" />
 					<Meta property="og:site_name" content="Grafos" />
 					<AppProvider>
 						<AuthProvider>

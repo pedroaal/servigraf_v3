@@ -11,7 +11,7 @@ const LoginPage = () => {
 	const [password, setPassword] = createSignal("");
 	const { authStore, login } = useAuth();
 
-	createRenderEffect(async () => {
+	createRenderEffect(() => {
 		if (authStore.session) navigate(Routes.dashboard);
 	});
 
@@ -26,7 +26,7 @@ const LoginPage = () => {
 			<MainLayout>
 				<div class="hero h-full">
 					<div class="hero-content">
-						<div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+						<div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
 							<form class="card-body" onSubmit={handleSubmit}>
 								<div class="form-control">
 									<label class="label">

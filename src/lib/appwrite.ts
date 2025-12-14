@@ -1,10 +1,14 @@
 import { Account, Client, ID, Storage, TablesDB } from "appwrite";
 
+const ENDPOINT =
+	import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
+const PROJECT = import.meta.env.VITE_APPWRITE_PROJECT_ID || "";
+const DEV_KEY = import.meta.env.VITE_APPWRITE_DEV_KEY || "";
+
 const client = new Client()
-	.setEndpoint(
-		import.meta.env.VITE_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1",
-	)
-	.setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID || "");
+	.setEndpoint(ENDPOINT)
+	.setProject(PROJECT)
+	.setDevKey(DEV_KEY);
 
 export const account = new Account(client);
 export const tables = new TablesDB(client);

@@ -27,10 +27,17 @@ const Notifications = [
 
 const DashboardLayout: ParentComponent = (props) => {
 	const location = useLocation();
-	const { authStore, checkAuth, logout } = useAuth();
+	const { authStore, getAuth, logout } = useAuth();
 	const [sidebarOpen, setSidebarOpen] = createSignal(false);
 
-	createRenderEffect(on(() => location.pathname, checkAuth));
+	createRenderEffect(
+		on(
+			() => location.pathname,
+			() => {
+				if (!authStore.session) getAuth();
+			},
+		),
+	);
 
 	return (
 		<div class="drawer md:drawer-open">
