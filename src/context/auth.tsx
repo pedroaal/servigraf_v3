@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { createContext, type ParentComponent, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import { account } from "~/lib/appwrite";
-import { PortalContext } from "./portal";
+import { useApp } from "./app";
 
 type AuthStore = {
 	user: any;
@@ -23,9 +23,14 @@ export const AuthContext = createContext<[AuthStore, AuthActions]>([
 	},
 ]);
 
+export const useAuth = () => {
+	const [authStore, { login, logout, checkAuth }] = useContext(AuthContext);
+	return { authStore, login, logout, checkAuth };
+};
+
 export const AuthProvider: ParentComponent = (props) => {
 	const navigate = useNavigate();
-	const [_store, { addAlert }] = useContext(PortalContext);
+	const { addAlert } = useApp();
 	const [store, setStore] = createStore<AuthStore>({
 		user: null,
 	});

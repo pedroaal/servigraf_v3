@@ -5,13 +5,12 @@ import {
 	createSignal,
 	on,
 	type ParentComponent,
-	useContext,
 } from "solid-js";
-import { AuthContext } from "~/context/auth";
+import { useAuth } from "~/context/auth";
 
 const DashboardLayout: ParentComponent = (props) => {
 	const location = useLocation();
-	const [authStore, { checkAuth, logout }] = useContext(AuthContext);
+	const { authStore, checkAuth, logout } = useAuth();
 	const [sidebarOpen, setSidebarOpen] = createSignal(false);
 
 	createRenderEffect(on(() => location.pathname, checkAuth));
