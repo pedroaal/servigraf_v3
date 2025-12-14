@@ -1,10 +1,6 @@
 import { Title } from "@solidjs/meta";
-import {
-	FaSolidEye,
-	FaSolidMagnifyingGlass,
-	FaSolidPencil,
-	FaSolidTrash,
-} from "solid-icons/fa";
+import { useNavigate } from "@solidjs/router";
+import { FaSolidPencil, FaSolidTrash } from "solid-icons/fa";
 import { createResource, For } from "solid-js";
 import BlueBoard from "~/components/core/BlueBoard";
 import DashboardLayout from "~/components/layout/Dashboard";
@@ -13,16 +9,21 @@ import { useAuth } from "~/context/auth";
 import { listUsers } from "~/services/users/users";
 
 const ClientsPage = () => {
+	const navigate = useNavigate();
 	const { authStore } = useAuth();
+
 	const [users] = createResource(
 		() => authStore.session?.prefs.companyId || "",
 		(companyId) => listUsers(companyId),
 	);
 
+	const goToUser = (userId: string) => {
+		navigate(`${Routes.user}/${userId}`);
+	};
+
 	return (
 		<>
 			<Title>Usuarios - Grafos</Title>
-
 			<DashboardLayout>
 				<div class="flex justify-between items-center">
 					<h1 class="text-3xl font-bold">Usuarios</h1>
@@ -37,20 +38,6 @@ const ClientsPage = () => {
 						},
 					]}
 				>
-					<div class="flex gap-4">
-						<div class="form-control flex-1">
-							<input
-								type="text"
-								placeholder="Buscar cliente..."
-								class="input input-bordered"
-							/>
-						</div>
-						<button type="button" class="btn btn-secondary">
-							<FaSolidMagnifyingGlass size={16} />
-						</button>
-					</div>
-
-					{/* Table */}
 					<div class="overflow-x-auto">
 						<table class="table table-zebra">
 							<thead>
@@ -59,12 +46,12 @@ const ClientsPage = () => {
 									<th>Nombre</th>
 									<th>Apellido</th>
 									<th>Perfil</th>
-									<th></th>
+									<th class="w-4"></th>
 								</tr>
 							</thead>
 							<tbody>
 								<For
-									each={users()}
+									each={users()?.rows}
 									fallback={
 										<tr>
 											<td colspan="4" class="text-center py-8">
@@ -76,19 +63,24 @@ const ClientsPage = () => {
 								>
 									{(item) => (
 										<tr>
-											<td>{item.status}</td>
+											<td>{item.status ? "Active" : "Deactive"}</td>
 											<td>{item.firstName}</td>
 											<td>{item.lastName}</td>
-											<td>{item.profile}</td>
+											<td>{""}</td>
+											{/* <td>{item.profileId?.$id ?? ""}</td> */}
 											<td>
 												<div class="flex gap-2">
-													<button type="button" class="btn btn-sm">
-														<FaSolidEye size={16} />
-													</button>
-													<button type="button" class="btn btn-sm">
+													<button
+														type="button"
+														class="btn btn-sm btn-square btn-ghost"
+														onClick={[goToUser, item.$id]}
+													>
 														<FaSolidPencil size={16} />
 													</button>
-													<button type="button" class="btn btn-sm btn-error">
+													<button
+														type="button"
+														class="btn btn-sm btn-square btn-ghost btn-error"
+													>
 														<FaSolidTrash size={16} />
 													</button>
 												</div>
