@@ -13,10 +13,15 @@ type AuthStore = {
 	user: Users | null;
 };
 
+interface IGetAuthOptions {
+	navigateOnFail?: boolean;
+	navigateOnSuccess?: boolean;
+}
+
 type AuthActions = {
 	login: (email: string, password: string) => void;
 	logout: () => void;
-	getAuth: () => void;
+	getAuth: (options: IGetAuthOptions) => void;
 };
 
 export const AuthContext = createContext<[AuthStore, AuthActions]>([
@@ -41,7 +46,7 @@ export const AuthProvider: ParentComponent = (props) => {
 		user: null,
 	});
 
-	const getAuth = async () => {
+	const getAuth = async (options: IGetAuthOptions) => {
 		try {
 			const currentSession = await account.get();
 			const currentUser = await listUsers(currentSession.prefs.companyId, {
@@ -49,17 +54,20 @@ export const AuthProvider: ParentComponent = (props) => {
 			});
 			setStore("session", currentSession);
 			setStore("user", currentUser.rows[0] || null);
+			if (options?.navigateOnSuccess) navigate(Routes.dashboard);
+			return true;
 		} catch (error) {
 			setStore("session", null);
 			setStore("user", null);
-			navigate(Routes.login);
+			if (options?.navigateOnFail) navigate(Routes.login);
+			return false;
 		}
 	};
 
 	const login = async (email: string, password: string) => {
 		try {
 			await account.createEmailPasswordSession({ email, password });
-			getAuth();
+			getAuth({});
 			addAlert({ type: "success", message: "Inicio de sesión exitoso" });
 			navigate(Routes.dashboard);
 			return true;

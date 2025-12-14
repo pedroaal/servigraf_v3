@@ -9,10 +9,11 @@ const LoginPage = () => {
 	const navigate = useNavigate();
 	const [email, setEmail] = createSignal("");
 	const [password, setPassword] = createSignal("");
-	const { authStore, login } = useAuth();
+	const { authStore, login, getAuth } = useAuth();
 
 	createRenderEffect(() => {
 		if (authStore.session) navigate(Routes.dashboard);
+		getAuth({ navigateOnSuccess: true });
 	});
 
 	const handleSubmit = async (e: Event) => {
