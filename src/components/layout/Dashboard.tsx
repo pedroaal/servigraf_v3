@@ -34,7 +34,10 @@ const DashboardLayout: ParentComponent = (props) => {
 		on(
 			() => location.pathname,
 			() => {
-				if (!authStore.session) getAuth();
+				if (!authStore.session)
+					getAuth({
+						navigateOnFail: true,
+					});
 			},
 		),
 	);
@@ -68,16 +71,18 @@ const DashboardLayout: ParentComponent = (props) => {
 						</Switch>
 						<For each={SidebarLinks}>
 							{(item) => (
-								<li>
-									<Switch>
-										<Match when={!item.children || item.children.length === 0}>
+								<Switch>
+									<Match when={!item.children || item.children.length === 0}>
+										<li>
 											<A href={item.href}>
 												<Dynamic component={item.icon} size={24}></Dynamic>
 												<span class="is-drawer-close:hidden">{item.label}</span>
 											</A>
-										</Match>
-										<Match when={item.children && item.children.length > 0}>
-											<div class="dropdown dropdown-right is-drawer-open:hidden">
+										</li>
+									</Match>
+									<Match when={item.children && item.children.length > 0}>
+										<div class="dropdown dropdown-right is-drawer-open:hidden">
+											<li>
 												<button tabindex={0} type="button">
 													<Dynamic component={item.icon} size={24}></Dynamic>
 												</button>
@@ -93,7 +98,9 @@ const DashboardLayout: ParentComponent = (props) => {
 														)}
 													</For>
 												</ul>
-											</div>
+											</li>
+										</div>
+										<li>
 											<details class="is-drawer-close:hidden">
 												<summary>
 													<Dynamic component={item.icon} size={24}></Dynamic>
@@ -111,9 +118,9 @@ const DashboardLayout: ParentComponent = (props) => {
 													</For>
 												</ul>
 											</details>
-										</Match>
-									</Switch>
-								</li>
+										</li>
+									</Match>
+								</Switch>
 							)}
 						</For>
 					</ul>
