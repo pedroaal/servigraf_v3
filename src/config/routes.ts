@@ -26,6 +26,7 @@ export enum Routes {
 	profiles = "/app/profiles",
 	profile = "/app/profile",
 	users = "/app/users",
+	user = "/app/user",
 	// system
 	company = "/app/company",
 	billingCompanies = "/app/billing-companies",

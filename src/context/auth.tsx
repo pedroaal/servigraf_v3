@@ -1,13 +1,15 @@
 import { useNavigate } from "@solidjs/router";
+import type { Models } from "appwrite";
 import { createContext, type ParentComponent, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Routes } from "~/config/routes";
 import { account } from "~/lib/appwrite";
+import { listUsers } from "~/services/users/users";
 import type { Users } from "~/types/appwrite";
 import { useApp } from "./app";
 
 type AuthStore = {
-	session: Record<string, any> | null;
+	session: Models.User | null;
 	user: Users | null;
 };
 
@@ -43,9 +45,15 @@ export const AuthProvider: ParentComponent = (props) => {
 		async login(email: string, password: string) {
 			try {
 				await account.createEmailPasswordSession({ email, password });
-				const currentUser = await account.get();
-				setStore("session", currentUser);
-				setStore("user", currentUser);
+				const currentSession = await account.get();
+				const currentUser = await listUsers(
+					currentSession.prefs.companyId.$id,
+					{
+						authId: currentSession.$id,
+					},
+				);
+				setStore("session", currentSession);
+				setStore("user", currentUser.rows[0] || null);
 				addAlert({ type: "success", message: "Inicio de sesión exitoso" });
 				navigate(Routes.dashboard);
 				return true;

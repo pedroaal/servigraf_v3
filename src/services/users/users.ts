@@ -3,14 +3,23 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Users } from "~/types/appwrite";
 
-export const listUsers = async (companyId: string) => {
+export const listUsers = async (
+	companyId: string,
+	options?: {
+		authId?: string;
+	},
+) => {
+	const queries = [
+		Query.equal("deletedAt", false),
+		Query.equal("companyId", companyId),
+	];
+	if (options?.authId) {
+		queries.push(Query.equal("authId", options.authId));
+	}
 	const res = await tables.listRows<Users>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.USERS,
-		queries: [
-			Query.equal("deletedAt", false),
-			Query.equal("companyId", companyId),
-		],
+		queries,
 	});
 	return res;
 };
