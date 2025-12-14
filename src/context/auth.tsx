@@ -46,12 +46,9 @@ export const AuthProvider: ParentComponent = (props) => {
 			try {
 				await account.createEmailPasswordSession({ email, password });
 				const currentSession = await account.get();
-				const currentUser = await listUsers(
-					currentSession.prefs.companyId.$id,
-					{
-						authId: currentSession.$id,
-					},
-				);
+				const currentUser = await listUsers(currentSession.prefs.companyId, {
+					authId: currentSession.$id,
+				});
 				setStore("session", currentSession);
 				setStore("user", currentUser.rows[0] || null);
 				addAlert({ type: "success", message: "Inicio de sesión exitoso" });
@@ -81,7 +78,7 @@ export const AuthProvider: ParentComponent = (props) => {
 		},
 		async checkAuth() {
 			if (store.user) {
-				return;
+				return true;
 			}
 
 			try {

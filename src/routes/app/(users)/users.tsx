@@ -15,7 +15,7 @@ import { listUsers } from "~/services/users/users";
 const ClientsPage = () => {
 	const { authStore } = useAuth();
 	const [users] = createResource(
-		() => authStore.session?.prefs.companyId.$id || "",
+		() => authStore.session?.prefs.companyId || "",
 		(companyId) => listUsers(companyId),
 	);
 
