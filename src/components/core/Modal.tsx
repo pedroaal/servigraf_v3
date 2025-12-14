@@ -23,14 +23,14 @@ export const Modal: ParentComponent<ModalProps> = (props) => {
 							type="button"
 							onClick={closeModal}
 						>
-							<FaSolidXmark />
+							<FaSolidXmark size={16} />
 						</button>
 						{props.title && (
 							<h3 class="font-bold text-lg mb-4">{props.title}</h3>
 						)}
 						<div class="py-4">{props.children}</div>
 					</div>
-					<div class="modal-backdrop" onClick={closeModal} />
+					<div class="modal-backdrop" role="button" onClick={closeModal} />
 				</div>
 			</Show>
 		</Portal>

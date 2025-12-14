@@ -1,4 +1,5 @@
 import { Title } from "@solidjs/meta";
+import { FaSolidPlus } from "solid-icons/fa";
 import { createSignal, For } from "solid-js";
 import DashboardLayout from "~/components/layout/Dashboard";
 import OrderModal from "~/components/production/OrderModal";
@@ -46,22 +47,10 @@ const OrdersPage = () => {
 						<h1 class="text-3xl font-bold">Gestión de Pedidos</h1>
 						<button
 							class="btn btn-primary"
-							onClick={() => openModal(Modals.Order)}
+							type="button"
+							onClick={[openModal, Modals.Order]}
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-5 w-5 mr-2"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M12 4v16m8-8H4"
-								/>
-							</svg>
+							<FaSolidPlus size={20} />
 							Nuevo Pedido
 						</button>
 					</div>

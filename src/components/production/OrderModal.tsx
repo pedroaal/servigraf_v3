@@ -3,7 +3,7 @@ import { useApp } from "~/context/app";
 import { Modal } from "../core/Modal";
 
 const OrderModal = () => {
-	const { openModal, closeModal } = useApp();
+	const { closeModal } = useApp();
 
 	return (
 		<Modal title="Nuevo Pedido" id={Modals.Order}>
@@ -55,13 +55,6 @@ const OrderModal = () => {
 				</div>
 
 				<div class="modal-action">
-					<button
-						type="button"
-						class="btn"
-						onClick={() => openModal(Modals.Order2)}
-					>
-						test
-					</button>
 					<button type="button" class="btn" onClick={closeModal}>
 						Cancelar
 					</button>

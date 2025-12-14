@@ -29,7 +29,7 @@ const DashboardLayout: ParentComponent = (props) => {
 				<div class="navbar bg-base-300 w-full">
 					<div class="flex-none lg:hidden">
 						<label for="sidebar-drawer" class="btn btn-square btn-ghost">
-							<FaSolidBars />
+							<FaSolidBars size={24} />
 						</label>
 					</div>
 					<div class="flex-1 px-2 mx-2">

@@ -7,15 +7,15 @@ const Footer = () => {
 				<div class="font-bold text-lg">Grafos</div>
 				<div class="flex flex-wrap gap-4">
 					<span class="flex items-center gap-2">
-						<FaBrandsWhatsapp />
+						<FaBrandsWhatsapp size={16} />
 						098 762 0452
 					</span>
 					<span class="flex items-center gap-2">
-						<FaBrandsWhatsapp />
+						<FaBrandsWhatsapp size={16} />
 						096 939 4891
 					</span>
 					<span class="flex items-center gap-2">
-						<FaSolidEnvelope />
+						<FaSolidEnvelope size={16} />
 						servigraf.ec@gmail.me
 					</span>
 				</div>

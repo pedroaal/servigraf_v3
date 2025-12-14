@@ -53,9 +53,9 @@ const Alert: Component<IAlert> = (props) => {
 				<button
 					class="btn btn-square btn-ghost btn-sm"
 					type="button"
-					onClick={() => removeAlert(props.id)}
+					onClick={[removeAlert, props.id]}
 				>
-					<FaSolidX />
+					<FaSolidX size={16} />
 				</button>
 			</div>
 		</div>
