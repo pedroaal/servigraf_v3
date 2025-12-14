@@ -4,7 +4,7 @@ import DashboardLayout from "~/components/layout/Dashboard";
 const DashboardPage = () => {
 	return (
 		<>
-			<Title>Clientes - ServiGraf</Title>
+			<Title>Clientes - Grafos</Title>
 
 			<DashboardLayout>
 				<div class="space-y-6">

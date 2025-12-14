@@ -39,7 +39,7 @@ const OrdersPage = () => {
 
 	return (
 		<>
-			<Title>Pedidos - ServiGraf</Title>
+			<Title>Pedidos - Grafos</Title>
 
 			<DashboardLayout>
 				<div class="space-y-6">
@@ -56,7 +56,7 @@ const OrdersPage = () => {
 					</div>
 
 					{/* Stats */}
-					<div class="stats stats-vertical lg:stats-horizontal shadow w-full bg-base-100">
+					<div class="stats stats-vertical md:stats-horizontal shadow w-full bg-base-100">
 						<div class="stat">
 							<div class="stat-title">Pedidos Pendientes</div>
 							<div class="stat-value text-warning">0</div>

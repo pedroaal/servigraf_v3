@@ -4,7 +4,7 @@ import MainLayout from "~/components/layout/Main";
 const AboutPage = () => {
 	return (
 		<>
-			<Title>About - ServiGraf</Title>
+			<Title>About - Grafos</Title>
 			<MainLayout>
 				<div>
 					<div

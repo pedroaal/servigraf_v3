@@ -23,7 +23,7 @@ const ContactPage = () => {
 
 	return (
 		<>
-			<Title>Contact - ServiGraf</Title>
+			<Title>Contact - Grafos</Title>
 			<MainLayout>
 				<div>
 					<div

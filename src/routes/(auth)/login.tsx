@@ -16,11 +16,11 @@ const LoginPage = () => {
 
 	return (
 		<>
-			<Title>Login - ServiGraf</Title>
+			<Title>Login - Grafos</Title>
 			<MainLayout>
 				<div class="hero min-h-screen">
-					<div class="hero-content flex-col lg:flex-row-reverse">
-						<div class="text-center lg:text-left">
+					<div class="hero-content flex-col md:flex-row-reverse">
+						<div class="text-center md:text-left">
 							<h1 class="text-5xl font-bold">Iniciar Sesión</h1>
 							<p class="py-6">Accede al sistema ERP ServiGraf V2</p>
 						</div>

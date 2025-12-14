@@ -49,7 +49,7 @@ const ServicesPage = () => {
 
 	return (
 		<>
-			<Title>Services - ServiGraf</Title>
+			<Title>Services - Grafos</Title>
 			<MainLayout>
 				<div>
 					<div
@@ -63,7 +63,7 @@ const ServicesPage = () => {
 					</div>
 
 					<div class="container mx-auto px-4 py-16 max-w-6xl">
-						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 							<For each={services}>
 								{(service) => (
 									<div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow h-64">

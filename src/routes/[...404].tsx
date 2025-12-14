@@ -5,7 +5,7 @@ import MainLayout from "~/components/layout/Main";
 const NotFoundPage = () => {
 	return (
 		<>
-			<Title>Not Found - ServiGraf</Title>
+			<Title>Not Found - Grafos</Title>
 			<MainLayout>
 				<h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase my-16">
 					Not Found

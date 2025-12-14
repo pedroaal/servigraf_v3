@@ -20,7 +20,7 @@ const GalleryPage = () => {
 
 	return (
 		<>
-			<Title>Gallery - ServiGraf</Title>
+			<Title>Gallery - Grafos</Title>
 			<MainLayout>
 				<div>
 					<div
@@ -38,7 +38,7 @@ const GalleryPage = () => {
 							Infraestructura
 						</h2>
 
-						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 							<For each={images}>
 								{(image) => (
 									<div class="card bg-base-100 shadow-xl hover:scale-105 transition-transform">

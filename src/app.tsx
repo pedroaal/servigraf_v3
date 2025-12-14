@@ -22,10 +22,10 @@ const App: Component = () => {
 			root={(props) => (
 				<MetaProvider>
 					<Meta name="author" content="Pedro Altamirano" />
-					<Meta name="description" content="Servigraf v3." />
+					<Meta name="description" content="Grafos" />
 					<Meta property="og:image" content="/favicon.ico" />
 					<Meta property="og:image:alt" content="Pedro Altamirano" />
-					<Meta property="og:site_name" content="Servigraf" />
+					<Meta property="og:site_name" content="Grafos" />
 					<AppProvider>
 						<AuthProvider>
 							<Suspense>{props.children}</Suspense>

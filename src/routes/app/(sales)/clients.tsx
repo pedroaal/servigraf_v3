@@ -18,7 +18,7 @@ const ClientsPage = () => {
 
 	return (
 		<>
-			<Title>Clientes - ServiGraf V2</Title>
+			<Title>Clientes - Grafos V2</Title>
 
 			<DashboardLayout>
 				<div class="space-y-6">
