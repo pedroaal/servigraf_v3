@@ -12,31 +12,31 @@ import EmptyTable from "~/components/core/EmptyTable";
 import DashboardLayout from "~/components/layout/Dashboard";
 import { Routes } from "~/config/routes";
 import { useAuth } from "~/context/auth";
-import { listUsers } from "~/services/users/users";
+import { listProfiles } from "~/services/users/profiles";
 
-const UsersPage = () => {
+const ProfilesPage = () => {
 	const navigate = useNavigate();
 	const { authStore } = useAuth();
 
-	const [users] = createResource(
+	const [profiles] = createResource(
 		() => authStore.session?.prefs.companyId || "",
-		(companyId) => listUsers(companyId),
+		(companyId) => listProfiles(companyId),
 	);
 
-	const goToUser = (userId: string) => {
-		navigate(`${Routes.user}/${userId}`);
+	const goToProfile = (id: string) => {
+		navigate(`${Routes.profile}/${id}`);
 	};
 
 	return (
 		<>
-			<Title>Usuarios - Grafos</Title>
+			<Title>Perfiles - Grafos</Title>
 			<DashboardLayout>
 				<BlueBoard
-					title="Gestiónar Usuarios"
+					title="Gestiónar Perfiles"
 					links={[
 						{
-							href: Routes.user,
-							label: "Nuevo Usuario",
+							href: Routes.profile,
+							label: "Nuevo Perfil",
 						},
 					]}
 				>
@@ -46,13 +46,15 @@ const UsersPage = () => {
 								<tr>
 									<th class="w-1/12">Status</th>
 									<th>Nombre</th>
-									<th>Apellido</th>
-									<th>Perfil</th>
+									<th>Descripcion</th>
 									<th class="w-1/12"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<For each={users()?.rows} fallback={<EmptyTable colspan={5} />}>
+								<For
+									each={profiles()?.rows}
+									fallback={<EmptyTable colspan={4} />}
+								>
 									{(item) => (
 										<tr>
 											<td>
@@ -62,16 +64,14 @@ const UsersPage = () => {
 													<FaSolidXmark size={24} class="text-error" />
 												)}
 											</td>
-											<td>{item.firstName}</td>
-											<td>{item.lastName}</td>
-											<td>{""}</td>
-											{/* <td>{item.profileId?.$id ?? ""}</td> */}
+											<td>{item.name}</td>
+											<td>{item.description}</td>
 											<td>
 												<div class="flex gap-2">
 													<button
 														type="button"
 														class="btn btn-sm btn-square btn-ghost"
-														onClick={[goToUser, item.$id]}
+														onClick={[goToProfile, item.$id]}
 													>
 														<FaSolidPencil size={16} />
 													</button>
@@ -95,4 +95,4 @@ const UsersPage = () => {
 	);
 };
 
-export default UsersPage;
+export default ProfilesPage;
