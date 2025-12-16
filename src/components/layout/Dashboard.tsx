@@ -146,7 +146,7 @@ const DashboardLayout: ParentComponent = (props) => {
 
 			<div class="drawer-content flex flex-col">
 				{/* Navbar */}
-				<nav class="navbar bg-base-300 w-full sticky top-0 px-4 py-2">
+				<nav class="navbar bg-base-300 w-full sticky top-0 px-4 py-2 z-10">
 					<div class="flex-1 flex items-center gap-4">
 						<label
 							for="sidebar-drawer"
