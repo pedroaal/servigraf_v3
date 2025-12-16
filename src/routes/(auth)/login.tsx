@@ -1,14 +1,19 @@
+import { createForm, type SubmitHandler } from "@modular-forms/solid";
 import { Title } from "@solidjs/meta";
 import { A, useNavigate } from "@solidjs/router";
-import { createRenderEffect, createSignal } from "solid-js";
+import { createRenderEffect } from "solid-js";
+import Input from "~/components/core/Input";
 import LandingLayout from "~/components/layout/Landing";
 import { Routes } from "~/config/routes";
 import { useAuth } from "~/context/auth";
 
+type LoginForm = {
+	email: string;
+	password: string;
+};
+
 const LoginPage = () => {
 	const navigate = useNavigate();
-	const [email, setEmail] = createSignal("");
-	const [password, setPassword] = createSignal("");
 	const { authStore, login, getAuth } = useAuth();
 
 	createRenderEffect(() => {
@@ -16,9 +21,16 @@ const LoginPage = () => {
 		getAuth({ navigateOnSuccess: true });
 	});
 
-	const handleSubmit = async (e: Event) => {
+	const [form, { Form, Field }] = createForm<LoginForm>({
+		initialValues: {
+			email: "",
+			password: "",
+		},
+	});
+
+	const handleSubmit: SubmitHandler<LoginForm> = (values, e) => {
 		e.preventDefault();
-		await login(email(), password());
+		login(values.email, values.password);
 	};
 
 	return (
@@ -28,48 +40,39 @@ const LoginPage = () => {
 				<div class="hero h-full">
 					<div class="hero-content">
 						<div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-							<form class="card-body" onSubmit={handleSubmit}>
-								<div class="form-control">
-									<label class="label">
-										<span class="label-text">Email</span>
-										<input
+							<Form class="card-body" onSubmit={handleSubmit}>
+								<Field name="email">
+									{(field, props) => (
+										<Input
+											{...props}
 											type="email"
+											label="Email"
 											placeholder="email@ejemplo.com"
-											class="input input-bordered"
-											value={email()}
-											onInput={(e) => setEmail(e.currentTarget.value)}
-											required
+											value={field.value}
+											error={field.error}
 										/>
-									</label>
-								</div>
-								<div class="form-control">
-									<label class="label">
-										<span class="label-text">Contraseña</span>
-										<input
+									)}
+								</Field>
+								<Field name="password">
+									{(field, props) => (
+										<Input
+											{...props}
 											type="password"
-											placeholder="contraseña"
-											class="input input-bordered"
-											value={password()}
-											onInput={(e) => setPassword(e.currentTarget.value)}
-											required
+											label="Contraseña"
+											value={field.value}
+											error={field.error}
 										/>
-									</label>
-									<A href="#" class="label label-text-alt link link-hover">
-										¿Olvidaste tu contraseña?
-									</A>
-								</div>
+									)}
+								</Field>
+								<A href="#" class="label label-text-alt link link-hover">
+									¿Olvidaste tu contraseña?
+								</A>
 								<div class="form-control mt-6">
 									<button type="submit" class="btn btn-primary">
 										Iniciar Sesión
 									</button>
 								</div>
-								<div class="divider">O</div>
-								<div class="text-center">
-									<A href="/register" class="link link-primary">
-										¿No tienes cuenta? Regístrate
-									</A>
-								</div>
-							</form>
+							</Form>
 						</div>
 					</div>
 				</div>
