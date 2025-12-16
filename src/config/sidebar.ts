@@ -1,5 +1,13 @@
 import type { IconTypes } from "solid-icons";
-import { FaSolidChartLine, FaSolidPager } from "solid-icons/fa";
+import {
+	FaSolidAddressBook,
+	FaSolidCalendarDays,
+	FaSolidFileInvoiceDollar,
+	FaSolidGauge,
+	FaSolidIndustry,
+	FaSolidServer,
+	FaSolidUsers,
+} from "solid-icons/fa";
 import { Routes } from "./routes";
 
 interface SidebarLink {
@@ -13,12 +21,12 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.dashboard,
 		label: "Dashboard",
-		icon: FaSolidPager,
+		icon: FaSolidGauge,
 	},
 	{
 		href: Routes.invoices,
 		label: "Facturacion",
-		icon: FaSolidChartLine,
+		icon: FaSolidFileInvoiceDollar,
 		children: [
 			{
 				href: Routes.invoices,
@@ -41,7 +49,7 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.orders,
 		label: "Produccion",
-		icon: FaSolidPager,
+		icon: FaSolidIndustry,
 		children: [
 			{
 				href: Routes.orders,
@@ -64,7 +72,7 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.rrhh,
 		label: "RRHH",
-		icon: FaSolidPager,
+		icon: FaSolidCalendarDays,
 		children: [
 			{
 				href: Routes.rrhh,
@@ -83,7 +91,7 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.clients,
 		label: "Ventas",
-		icon: FaSolidPager,
+		icon: FaSolidAddressBook,
 		children: [
 			{
 				href: Routes.clients,
@@ -106,7 +114,7 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.users,
 		label: "Usuarios",
-		icon: FaSolidPager,
+		icon: FaSolidUsers,
 		children: [
 			{
 				href: Routes.profiles,
@@ -121,7 +129,7 @@ export const SidebarLinks: SidebarLink[] = [
 	{
 		href: Routes.company,
 		label: "Sistema",
-		icon: FaSolidPager,
+		icon: FaSolidServer,
 		children: [
 			{
 				href: Routes.company,
