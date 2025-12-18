@@ -11,20 +11,46 @@ import BlueBoard from "~/components/core/BlueBoard";
 import EmptyTable from "~/components/core/EmptyTable";
 import DashboardLayout from "~/components/layout/Dashboard";
 import { Routes } from "~/config/routes";
+import { useApp } from "~/context/app";
 import { useAuth } from "~/context/auth";
-import { listProfiles } from "~/services/users/profiles";
+import { deleteProfile, listProfiles } from "~/services/users/profiles";
 
 const ProfilesPage = () => {
 	const navigate = useNavigate();
 	const { authStore } = useAuth();
+	const { addAlert } = useApp();
 
-	const [profiles] = createResource(
+	const [profiles, { refetch }] = createResource(
 		() => authStore.session?.prefs.companyId || "",
 		(companyId) => listProfiles(companyId),
 	);
 
-	const goToProfile = (id: string) => {
-		navigate(`${Routes.profile}/${id}`);
+	const goToProfile = (profileId: string) => {
+		navigate(`${Routes.profile}/${profileId}`);
+	};
+
+	const handleDelete = async ({
+		profileId,
+		name,
+	}: {
+		profileId: string;
+		name: string;
+	}) => {
+		const confirm = window.confirm(
+			`¿Está seguro de eliminar el perfil "${name}"? `,
+		);
+		if (!confirm) return;
+
+		try {
+			await deleteProfile(profileId);
+			addAlert({ type: "success", message: "Perfil eliminado con éxito" });
+			refetch();
+		} catch (error: any) {
+			addAlert({
+				type: "error",
+				message: error.message || "Error al eliminar perfil",
+			});
+		}
 	};
 
 	return (
@@ -32,7 +58,7 @@ const ProfilesPage = () => {
 			<Title>Perfiles - Grafos</Title>
 			<DashboardLayout>
 				<BlueBoard
-					title="Gestiónar Perfiles"
+					title="Gestionar Perfiles"
 					links={[
 						{
 							href: Routes.profile,
@@ -46,8 +72,8 @@ const ProfilesPage = () => {
 								<tr>
 									<th class="w-1/12">Status</th>
 									<th>Nombre</th>
-									<th>Descripcion</th>
-									<th class="w-1/12"></th>
+									<th>Descripción</th>
+									<th class="w-1/12" />
 								</tr>
 							</thead>
 							<tbody>
@@ -78,6 +104,10 @@ const ProfilesPage = () => {
 													<button
 														type="button"
 														class="btn btn-sm btn-square btn-ghost btn-error"
+														onClick={[
+															handleDelete,
+															{ profileId: item.$id, name: item.name },
+														]}
 													>
 														<FaSolidTrash size={16} />
 													</button>

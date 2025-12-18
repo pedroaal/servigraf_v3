@@ -15,42 +15,35 @@ export const listProfileModules = async (profileId?: string) => {
 	return res;
 };
 
-export const getProfileModule = async (id: string) => {
-	const res = await tables.getRow<ProfileModules>({
-		databaseId: DATABASE_ID,
-		tableId: TABLES.PROFILE_MODULES,
-		rowId: id,
-	});
-	return res;
-};
-
-export const createProfileModule = async (payload: ProfileModules) => {
-	const res = await tables.createRow<ProfileModules>({
-		databaseId: DATABASE_ID,
-		tableId: TABLES.PROFILE_MODULES,
-		rowId: makeId(),
-		data: payload,
-	});
-	return res;
-};
-
-export const updateProfileModule = async (
-	id: string,
-	payload: Partial<ProfileModules>,
+export const syncProfileModules = async (
+	profileId: string,
+	modules: Array<{ moduleId: string; roleId: string }>,
 ) => {
-	const res = await tables.updateRow<ProfileModules>({
-		databaseId: DATABASE_ID,
-		tableId: TABLES.PROFILE_MODULES,
-		rowId: id,
-		data: payload,
-	});
-	return res;
-};
+	const existing = await listProfileModules(profileId);
+	await Promise.all(
+		existing.rows.map((item) =>
+			tables.deleteRow({
+				databaseId: DATABASE_ID,
+				tableId: TABLES.PROFILE_MODULES,
+				rowId: item.$id,
+			}),
+		),
+	);
 
-export const deleteProfileModule = (id: string) => {
-	return tables.deleteRow({
-		databaseId: DATABASE_ID,
-		tableId: TABLES.PROFILE_MODULES,
-		rowId: id,
-	});
+	// Create new relations
+	const promises = modules.map((mod) =>
+		tables.createRow<ProfileModules>({
+			databaseId: DATABASE_ID,
+			tableId: TABLES. PROFILE_MODULES,
+			rowId: makeId(),
+			data: {
+				profileId,
+				moduleId: mod.moduleId,
+				roleId: mod. roleId,
+				deletedAt: null,
+			},
+		}),
+	);
+
+	return await Promise.all(promises);
 };
