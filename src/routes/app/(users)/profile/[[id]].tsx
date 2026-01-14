@@ -39,20 +39,32 @@ const ProfilePage = () => {
 
 	const isEdit = () => !!params.id;
 
-	const [profile] = createResource(() => params.id ?? "", getProfile);
 	const [modules] = createResource(
 		() => authStore.session?.prefs.companyId || "",
 		listModules,
 	);
 	const [roles] = createResource(listRoles);
+
+	const [profile] = createResource(() => params.id ?? "", getProfile);
 	const [profileModules] = createResource(
 		() => params.id ?? "",
 		listProfileModules,
 	);
 
+	const roleLevels = () => {
+		if (!roles()?.rows) return {};
+
+		const rolesMap: Record<string, number> = {};
+		for (const rol of roles()!.rows) {
+			rolesMap[rol.$id] = rol.level;
+		}
+
+		return rolesMap;
+	};
+
 	// Store selected module-role relationships
 	const [selectedModules, setSelectedModules] = createSignal<
-		Record<string, number>
+		Record<string, string>
 	>({});
 
 	const [form, { Form, Field }] = createForm<ProfileForm>({
@@ -77,51 +89,35 @@ const ProfilePage = () => {
 
 	// Load profile modules relationships
 	createEffect(() => {
-		if (profileModules()?.rows) {
-			const moduleMap: Record<string, number> = {};
-			for (const pm of profileModules()!.rows) {
-				// Convert roleId to number (1=Ver, 2=Crear, 3=Modificar, 4=Eliminar)
-				const roleLevel = getRoleLevel(pm.roleId as any);
-				moduleMap[pm.moduleId as any] = roleLevel;
-			}
-			setSelectedModules(moduleMap);
+		if (!profileModules()?.rows) return;
+
+		const moduleMap: Record<string, string> = {};
+		for (const pm of profileModules()!.rows) {
+			moduleMap[pm.moduleId] = pm.roleId;
 		}
+
+		setSelectedModules(moduleMap);
 	});
 
-	// Helper:  Get role level from role ID
-	const getRoleLevel = (roleId: string): number => {
-		const role = roles()?.rows.find((r) => r.$id === roleId);
-		if (!role) return 0;
-		// Assuming roles are named:  "Ver", "Crear", "Modificar", "Eliminar"
-		if (role.name === "Ver") return 1;
-		if (role.name === "Crear") return 2;
-		if (role.name === "Modificar") return 3;
-		if (role.name === "Eliminar") return 4;
-		return 0;
-	};
-
-	// Helper: Get role ID by level
-	const getRoleIdByLevel = (level: number): string => {
-		const roleName = ["", "Ver", "Crear", "Modificar", "Eliminar"][level];
-		return roles()?.rows.find((r) => r.name === roleName)?.$id || "";
-	};
+	const getRole = (level: number): string =>
+		Object.keys(roleLevels()).find((key) => roleLevels()[key] === level) || "";
 
 	// Toggle individual checkbox
-	const handleCheckboxChange = (moduleId: string, level: number) => {
+	const handleCheckboxChange = (moduleId: string, roleId: string) => {
 		setSelectedModules((prev) => {
-			const current = prev[moduleId] || 0;
+			const current = prev[moduleId] || "";
 			const newState = { ...prev };
 
-			if (current >= level) {
-				// Uncheck:  remove all higher levels
-				newState[moduleId] = level - 1;
+			if (roleLevels()[current] >= roleLevels()[roleId]) {
+				// Uncheck:  remove all higher roleIds
+				newState[moduleId] = getRole(roleLevels()[roleId] - 1);
 			} else {
-				// Check: select up to this level
-				newState[moduleId] = level;
+				// Check: select up to this roleId
+				newState[moduleId] = roleId;
 			}
 
 			// If 0, remove from object
-			if (newState[moduleId] === 0) {
+			if (newState[moduleId] === "") {
 				delete newState[moduleId];
 			}
 
@@ -130,29 +126,36 @@ const ProfilePage = () => {
 	};
 
 	// Check if module has role level
-	const hasRole = (moduleId: string, level: number): boolean => {
-		return (selectedModules()[moduleId] || 0) >= level;
+	const hasRole = (moduleId: string, roleId: string): boolean => {
+		return (
+			roleLevels()[selectedModules()[moduleId] || ""] >= roleLevels()[roleId]
+		);
 	};
 
 	// Toggle all checkboxes in a column
-	const toggleAll = (level: number) => {
+	const toggleAll = (roleId: string) => {
 		const allModules = modules()?.rows || [];
-		const allChecked = allModules.every((m) => hasRole(m.$id, level));
+		const allChecked = allModules.every((m) => hasRole(m.$id, roleId));
 
 		setSelectedModules((prev) => {
 			const newState = { ...prev };
 			for (const module of allModules) {
 				if (allChecked) {
 					// Uncheck all at this level and above
-					if (newState[module.$id] >= level) {
-						newState[module.$id] = level - 1;
+					if (roleLevels()[newState[module.$id]] >= roleLevels()[roleId]) {
+						newState[module.$id] = getRole(roleLevels()[roleId] - 1);
 					}
 				} else {
 					// Check all up to this level
-					newState[module.$id] = Math.max(newState[module.$id] || 0, level);
+					newState[module.$id] = getRole(
+						Math.max(
+							roleLevels()[newState[module.$id] || ""] || 0,
+							roleLevels()[roleId],
+						),
+					);
 				}
 
-				if (newState[module.$id] === 0) {
+				if (newState[module.$id] === "") {
 					delete newState[module.$id];
 				}
 			}
@@ -185,9 +188,9 @@ const ProfilePage = () => {
 
 			// Sync module-role relationships
 			const moduleRelations = Object.entries(selectedModules()).map(
-				([moduleId, level]) => ({
+				([moduleId, roleId]) => ({
 					moduleId,
-					roleId: getRoleIdByLevel(level),
+					roleId,
 				}),
 			);
 
@@ -277,46 +280,19 @@ const ProfilePage = () => {
 								<thead>
 									<tr>
 										<th class="w-2/5">Módulos del perfil</th>
-										<th class="w-15 text-center">
-											<button
-												type="button"
-												class="btn btn-xs btn-ghost"
-												onClick={() => toggleAll(1)}
-											>
-												<i class="fas fa-eye" />
-												<span class="hidden md:inline ml-1">Ver</span>
-											</button>
-										</th>
-										<th class="w-15 text-center">
-											<button
-												type="button"
-												class="btn btn-xs btn-ghost"
-												onClick={() => toggleAll(2)}
-											>
-												<i class="fas fa-plus" />
-												<span class="hidden md:inline ml-1">Crear</span>
-											</button>
-										</th>
-										<th class="w-15 text-center">
-											<button
-												type="button"
-												class="btn btn-xs btn-ghost"
-												onClick={() => toggleAll(3)}
-											>
-												<i class="fas fa-edit" />
-												<span class="hidden md:inline ml-1">Modificar</span>
-											</button>
-										</th>
-										<th class="w-15 text-center">
-											<button
-												type="button"
-												class="btn btn-xs btn-ghost"
-												onClick={() => toggleAll(4)}
-											>
-												<i class="fas fa-times" />
-												<span class="hidden md:inline ml-1">Eliminar</span>
-											</button>
-										</th>
+										<For each={roles()?.rows}>
+											{(role) => (
+												<th class="w-15 text-center">
+													<button
+														type="button"
+														class="btn btn-xs btn-ghost"
+														onClick={() => toggleAll(role.$id)}
+													>
+														{role.name}
+													</button>
+												</th>
+											)}
+										</For>
 									</tr>
 								</thead>
 								<tbody>
@@ -326,14 +302,14 @@ const ProfilePage = () => {
 												<td class={module.isMain ? "" : "pl-10"}>
 													{module.name}
 												</td>
-												{[1, 2, 3, 4].map((level) => (
+												{roles()?.rows.map((role) => (
 													<td class="text-center">
 														<input
 															type="checkbox"
 															class="checkbox checkbox-sm"
-															checked={hasRole(module.$id, level)}
+															checked={hasRole(module.$id, role.$id)}
 															onChange={() =>
-																handleCheckboxChange(module.$id, level)
+																handleCheckboxChange(module.$id, role.$id)
 															}
 														/>
 													</td>

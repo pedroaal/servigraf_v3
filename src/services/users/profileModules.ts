@@ -37,9 +37,9 @@ export const syncProfileModules = async (
 			tableId: TABLES.PROFILE_MODULES,
 			rowId: makeId(),
 			data: {
-				profileId: [profileId],
-				moduleId: [mod.moduleId],
-				roleId: [mod.roleId],
+				profileId,
+				moduleId: mod.moduleId,
+				roleId: mod.roleId,
 				deletedAt: null,
 			},
 		}),
