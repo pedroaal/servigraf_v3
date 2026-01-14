@@ -12,6 +12,7 @@ interface IAction {
 
 interface IButton extends IAction {
 	onClick?: () => void;
+	form?: string;
 }
 
 interface ILink extends IAction {
@@ -72,8 +73,9 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 							{(item) => (
 								<button
 									class="btn btn-primary btn-sm"
-									type="button"
+									type={item.form ? "submit" : "button"}
 									onClick={item.onClick}
+									form={item.form}
 								>
 									{item.label}
 								</button>
