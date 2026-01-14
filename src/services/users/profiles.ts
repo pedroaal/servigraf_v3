@@ -41,10 +41,13 @@ export const updateProfile = async (id: string, payload: Partial<Profiles>) => {
 	return res;
 };
 
-export const deleteProfile = (id: string) => {
-	return tables.deleteRow({
+export const deleteProfile = (rowId: string) => {
+	return tables.updateRow<Profiles>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PROFILES,
-		rowId: id,
+		rowId,
+		data: {
+			deletedAt: new Date().toISOString(),
+		},
 	});
 };

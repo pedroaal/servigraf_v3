@@ -1,12 +1,14 @@
 import { createForm, setValues, valiForm } from "@modular-forms/solid";
 import { Title } from "@solidjs/meta";
 import { useNavigate, useParams } from "@solidjs/router";
-import { createEffect, createResource, createSignal, For } from "solid-js";
+import { createEffect, createResource, createSignal, For, on } from "solid-js";
 import { boolean, object, string } from "valibot";
+
 import BlueBoard from "~/components/core/BlueBoard";
 import Checkbox from "~/components/core/Checkbox";
 import Input from "~/components/core/Input";
 import DashboardLayout from "~/components/layout/Dashboard";
+
 import { Routes } from "~/config/routes";
 import { useApp } from "~/context/app";
 import { useAuth } from "~/context/auth";
@@ -37,7 +39,20 @@ const ProfilePage = () => {
 	const { authStore } = useAuth();
 	const { addAlert, addLoader, removeLoader } = useApp();
 
-	const isEdit = () => !!params.id;
+	const isEdit = () => Boolean(params.id);
+
+	const [selectedModules, setSelectedModules] = createSignal<
+		Record<string, string>
+	>({});
+
+	const [form, { Form, Field }] = createForm<ProfileForm>({
+		validate: valiForm(ProfileSchema),
+		initialValues: {
+			name: "",
+			description: "",
+			status: true,
+		},
+	});
 
 	const [modules] = createResource(
 		() => authStore.session?.prefs.companyId || "",
@@ -62,61 +77,60 @@ const ProfilePage = () => {
 		return rolesMap;
 	};
 
-	// Store selected module-role relationships
-	const [selectedModules, setSelectedModules] = createSignal<
-		Record<string, string>
-	>({});
+	createEffect(
+		on(
+			() => profile(),
+			(profileData) => {
+				if (!profileData || !isEdit()) return;
 
-	const [form, { Form, Field }] = createForm<ProfileForm>({
-		validate: valiForm(ProfileSchema),
-		initialValues: {
-			name: "",
-			description: "",
-			status: true,
-		},
-	});
+				setValues(form, {
+					name: profileData.name || "",
+					description: profileData.description || "",
+					status: profileData.status ?? true,
+				});
+			},
+		),
+	);
 
-	// Load profile data
-	createEffect(() => {
-		if (profile() && isEdit()) {
-			setValues(form, {
-				name: profile()?.name || "",
-				description: profile()?.description || "",
-				status: profile()?.status ?? true,
-			});
-		}
-	});
+	createEffect(
+		on(
+			() => profileModules(),
+			(profileModules) => {
+				if (!profileModules?.rows) return;
 
-	// Load profile modules relationships
-	createEffect(() => {
-		if (!profileModules()?.rows) return;
+				const moduleMap: Record<string, string> = {};
+				for (const pm of profileModules.rows) {
+					moduleMap[pm.moduleId] = pm.roleId;
+				}
 
-		const moduleMap: Record<string, string> = {};
-		for (const pm of profileModules()!.rows) {
-			moduleMap[pm.moduleId] = pm.roleId;
-		}
+				setSelectedModules(moduleMap);
+			},
+		),
+	);
 
-		setSelectedModules(moduleMap);
-	});
+	const hasRole = (moduleId: string, roleId: string): boolean => {
+		return (
+			roleLevels()[selectedModules()[moduleId] || ""] >= roleLevels()[roleId]
+		);
+	};
 
-	const getRole = (level: number): string =>
-		Object.keys(roleLevels()).find((key) => roleLevels()[key] === level) || "";
+	const getRole = (level: number): string => {
+		return (
+			Object.keys(roleLevels()).find((key) => roleLevels()[key] === level) || ""
+		);
+	};
 
-	// Toggle individual checkbox
 	const handleCheckboxChange = (moduleId: string, roleId: string) => {
 		setSelectedModules((prev) => {
 			const current = prev[moduleId] || "";
 			const newState = { ...prev };
 
 			if (roleLevels()[current] >= roleLevels()[roleId]) {
-				// Uncheck:  remove all higher roleIds
 				newState[moduleId] = getRole(roleLevels()[roleId] - 1);
 			} else {
-				// Check: select up to this roleId
 				newState[moduleId] = roleId;
 			}
 
-			// If 0, remove from object
 			if (newState[moduleId] === "") {
 				delete newState[moduleId];
 			}
@@ -125,14 +139,6 @@ const ProfilePage = () => {
 		});
 	};
 
-	// Check if module has role level
-	const hasRole = (moduleId: string, roleId: string): boolean => {
-		return (
-			roleLevels()[selectedModules()[moduleId] || ""] >= roleLevels()[roleId]
-		);
-	};
-
-	// Toggle all checkboxes in a column
 	const toggleAll = (roleId: string) => {
 		const allModules = modules()?.rows || [];
 		const allChecked = allModules.every((m) => hasRole(m.$id, roleId));
@@ -141,12 +147,10 @@ const ProfilePage = () => {
 			const newState = { ...prev };
 			for (const module of allModules) {
 				if (allChecked) {
-					// Uncheck all at this level and above
 					if (roleLevels()[newState[module.$id]] >= roleLevels()[roleId]) {
 						newState[module.$id] = getRole(roleLevels()[roleId] - 1);
 					}
 				} else {
-					// Check all up to this level
 					newState[module.$id] = getRole(
 						Math.max(
 							roleLevels()[newState[module.$id] || ""] || 0,
@@ -163,13 +167,11 @@ const ProfilePage = () => {
 		});
 	};
 
-	const handleSubmit = async (values: ProfileForm) => {
+	const handleSubmit = async (formValues: ProfileForm) => {
 		const loaderId = addLoader();
 		try {
-			const payload: Partial<Profiles> = {
-				name: values.name,
-				description: values.description,
-				status: values.status,
+			const payload = {
+				...formValues,
 				companyId: authStore.session?.prefs.companyId || "",
 				deletedAt: null,
 			};
@@ -186,7 +188,6 @@ const ProfilePage = () => {
 				addAlert({ type: "success", message: "Perfil creado con éxito" });
 			}
 
-			// Sync module-role relationships
 			const moduleRelations = Object.entries(selectedModules()).map(
 				([moduleId, roleId]) => ({
 					moduleId,
@@ -216,17 +217,12 @@ const ProfilePage = () => {
 					actions={[
 						{
 							label: "Guardar",
-							onClick: () => {
-								const formElement = document.getElementById(
-									"profileForm",
-								) as HTMLFormElement;
-								formElement?.requestSubmit();
-							},
+							form: "profileForm",
 						},
 					]}
 				>
-					<Form id="profileForm" onSubmit={handleSubmit} class="space-y-6">
-						{/* Basic Info */}
+					{/* Basic Info */}
+					<Form id="profileForm" onSubmit={handleSubmit}>
 						<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
 							<div class="md:col-span-5">
 								<Field name="name">
@@ -273,54 +269,54 @@ const ProfilePage = () => {
 								</Field>
 							</div>
 						</div>
+					</Form>
 
-						{/* Modules Permissions Table */}
-						<div class="overflow-x-auto">
-							<table class="table table-zebra table-sm">
-								<thead>
-									<tr>
-										<th class="w-2/5">Módulos del perfil</th>
-										<For each={roles()?.rows}>
-											{(role) => (
-												<th class="w-15 text-center">
-													<button
-														type="button"
-														class="btn btn-xs btn-ghost"
-														onClick={() => toggleAll(role.$id)}
-													>
-														{role.name}
-													</button>
-												</th>
-											)}
-										</For>
-									</tr>
-								</thead>
-								<tbody>
-									<For each={modules()?.rows}>
-										{(module: Modules) => (
-											<tr>
-												<td class={module.isMain ? "" : "pl-10"}>
-													{module.name}
-												</td>
-												{roles()?.rows.map((role) => (
-													<td class="text-center">
-														<input
-															type="checkbox"
-															class="checkbox checkbox-sm"
-															checked={hasRole(module.$id, role.$id)}
-															onChange={() =>
-																handleCheckboxChange(module.$id, role.$id)
-															}
-														/>
-													</td>
-												))}
-											</tr>
+					{/* Modules Permissions Table */}
+					<div class="overflow-x-auto">
+						<table class="table table-zebra table-sm">
+							<thead>
+								<tr>
+									<th class="w-2/5">Módulos del perfil</th>
+									<For each={roles()?.rows}>
+										{(role) => (
+											<th class="w-15 text-center">
+												<button
+													type="button"
+													class="btn btn-xs btn-ghost"
+													onClick={() => toggleAll(role.$id)}
+												>
+													{role.name}
+												</button>
+											</th>
 										)}
 									</For>
-								</tbody>
-							</table>
-						</div>
-					</Form>
+								</tr>
+							</thead>
+							<tbody>
+								<For each={modules()?.rows}>
+									{(module: Modules) => (
+										<tr>
+											<td class={module.isMain ? "" : "pl-10"}>
+												{module.name}
+											</td>
+											{roles()?.rows.map((role) => (
+												<td class="text-center">
+													<input
+														type="checkbox"
+														class="checkbox checkbox-sm"
+														checked={hasRole(module.$id, role.$id)}
+														onChange={() =>
+															handleCheckboxChange(module.$id, role.$id)
+														}
+													/>
+												</td>
+											))}
+										</tr>
+									)}
+								</For>
+							</tbody>
+						</table>
+					</div>
 				</BlueBoard>
 			</DashboardLayout>
 		</>
