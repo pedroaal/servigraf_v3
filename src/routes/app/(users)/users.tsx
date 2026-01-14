@@ -64,8 +64,7 @@ const UsersPage = () => {
 											</td>
 											<td>{item.firstName}</td>
 											<td>{item.lastName}</td>
-											<td>{""}</td>
-											{/* <td>{item.profileId?.$id ?? ""}</td> */}
+											<td>{item.profileId?.name || ""}</td>
 											<td>
 												<div class="flex gap-2">
 													<button

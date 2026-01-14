@@ -12,6 +12,7 @@ export const listUsers = async (
 	const queries = [
 		Query.isNull("deletedAt"),
 		Query.equal("companyId", companyId),
+		Query.select(['*', 'profileId.name'])
 	];
 	if (options?.authId) {
 		queries.push(Query.equal("authId", options.authId));
