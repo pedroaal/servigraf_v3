@@ -37,43 +37,42 @@ const LoginPage = () => {
 		<>
 			<Title>Login - Grafos</Title>
 			<LandingLayout>
-				<div class="hero h-full">
-					<div class="hero-content">
-						<div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-							<Form class="card-body" onSubmit={handleSubmit}>
-								<Field name="email">
-									{(field, props) => (
-										<Input
-											{...props}
-											type="email"
-											label="Email"
-											placeholder="email@ejemplo.com"
-											value={field.value}
-											error={field.error}
-										/>
-									)}
-								</Field>
-								<Field name="password">
-									{(field, props) => (
-										<Input
-											{...props}
-											type="password"
-											label="Contraseña"
-											value={field.value}
-											error={field.error}
-										/>
-									)}
-								</Field>
-								<A href="#" class="label label-text-alt link link-hover">
-									¿Olvidaste tu contraseña?
-								</A>
-								<div class="form-control mt-6">
-									<button type="submit" class="btn btn-primary">
-										Iniciar Sesión
-									</button>
-								</div>
-							</Form>
-						</div>
+				<div class="flex h-full w-full justify-center items-center">
+					<div class="card w-full max-w-md shadow-lg bg-base-100">
+						<Form class="card-body" onSubmit={handleSubmit}>
+							<h2 class="card-title justify-center">Iniciar Sesión</h2>
+							<Field name="email">
+								{(field, props) => (
+									<Input
+										{...props}
+										type="email"
+										label="Email"
+										placeholder="email@ejemplo.com"
+										value={field.value}
+										error={field.error}
+									/>
+								)}
+							</Field>
+							<Field name="password">
+								{(field, props) => (
+									<Input
+										{...props}
+										type="password"
+										label="Contraseña"
+										value={field.value}
+										error={field.error}
+									/>
+								)}
+							</Field>
+							<A href="#" class="label label-text-alt link link-hover">
+								¿Olvidaste tu contraseña?
+							</A>
+							<div class="card-actions justify-end">
+								<button type="submit" class="btn btn-primary">
+									Iniciar Sesión
+								</button>
+							</div>
+						</Form>
 					</div>
 				</div>
 			</LandingLayout>

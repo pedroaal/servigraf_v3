@@ -77,7 +77,7 @@ export const AppProvider: ParentComponent = (props) => {
 
 		if (options.dismissible) {
 			const timerId = setTimeout(() => {
-				actions.removeAlert(id);
+				removeAlert(id);
 			}, options.timeout);
 			timeMap.set(id, timerId);
 		}
