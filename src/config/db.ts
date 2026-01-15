@@ -37,6 +37,7 @@ export enum TABLES {
 	PROCESSES = "processes",
 	PRODUCTION_RESETS = "production-resets",
 	SUPPLIERS = "suppliers",
+	CLIENT_FOLLOWERS = "client-followers",
 	// Sales
 	ACTIVITIES = "activities",
 	CLIENT_COMPANIES = "client-companies",
@@ -49,9 +50,7 @@ export enum TABLES {
 	PRODUCT_CATEGORIES = "product-categories",
 	PRODUCTS = "products",
 	// System
-	COMPANIES = "companies",
 	COMPANY_DETAILS = "company-details",
-	COMPANY_TYPES = "company-types",
 	CREDENTIALS = "credentials",
 	NOTIFICATIONS = "notifications",
 	// Users

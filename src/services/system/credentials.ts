@@ -7,9 +7,9 @@ export const listCredentials = async () => {
 	const res = await tables.listRows<Credentials>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.CREDENTIALS,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getCredential = async (id: string) => {

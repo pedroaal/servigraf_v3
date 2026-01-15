@@ -7,9 +7,9 @@ export const listPayrolls = async () => {
 	const res = await tables.listRows<Payroll>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PAYROLL,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getPayroll = async (id: string) => {

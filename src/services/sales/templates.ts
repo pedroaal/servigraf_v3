@@ -7,9 +7,9 @@ export const listTemplates = async () => {
 	const res = await tables.listRows<Templates>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.TEMPLATES,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getTemplate = async (id: string) => {

@@ -7,9 +7,9 @@ export const listProfiles = async () => {
 	const res = await tables.listRows<Profiles>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PROFILES,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getProfile = async (id: string) => {

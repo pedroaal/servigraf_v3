@@ -7,9 +7,9 @@ export const listEquipment = async () => {
 	const res = await tables.listRows<Equipment>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.EQUIPMENT,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getEquipment = async (id: string) => {

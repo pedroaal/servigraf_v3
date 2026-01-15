@@ -7,9 +7,9 @@ export const listClientCompanies = async () => {
 	const res = await tables.listRows<ClientCompanies>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.CLIENT_COMPANIES,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getClientCompany = async (id: string) => {

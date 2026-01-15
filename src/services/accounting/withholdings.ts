@@ -7,9 +7,9 @@ export const listWithholdings = async () => {
 	const res = await tables.listRows<Withholdings>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.WITHHOLDINGS,
-		queries: [Query.isNull("deletedAt")},
+		queries: [Query.isNull("deletedAt")],
 	});
-return res;
+	return res;
 };
 
 export const getWithholding = async (id: string) => {
