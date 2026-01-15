@@ -17,13 +17,9 @@ import { deleteProfile, listProfiles } from "~/services/users/profiles";
 
 const ProfilesPage = () => {
 	const navigate = useNavigate();
-	const { authStore } = useAuth();
 	const { addAlert } = useApp();
 
-	const [profiles, { refetch }] = createResource(
-		() => authStore.user?.tenantId || "",
-		(tenantId) => listProfiles(tenantId),
-	);
+	const [profiles, { refetch }] = createResource(listProfiles);
 
 	const goToProfile = (profileId: string) => {
 		navigate(`${Routes.profile}/${profileId}`);

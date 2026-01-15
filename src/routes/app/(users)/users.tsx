@@ -16,12 +16,8 @@ import { listUsers } from "~/services/users/users";
 
 const UsersPage = () => {
 	const navigate = useNavigate();
-	const { authStore } = useAuth();
 
-	const [users] = createResource(
-		() => authStore.user?.tenantId || "",
-		(tenantId) => listUsers(tenantId),
-	);
+	const [users] = createResource(listUsers);
 
 	const goToUser = (userId: string) => {
 		navigate(`${Routes.user}/${userId}`);

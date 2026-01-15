@@ -31,7 +31,7 @@ const ProfileSchema = object({
 	status: boolean(),
 });
 
-type ProfileForm = Omit<Profiles, "$id" | "tenantId" | "deletedAt">;
+type ProfileForm = Omit<Profiles, "$id" | "deletedAt">;
 
 const ProfilePage = () => {
 	const params = useParams();
@@ -54,10 +54,7 @@ const ProfilePage = () => {
 		},
 	});
 
-	const [modules] = createResource(
-		() => authStore.user?.tenantId || "",
-		listModules,
-	);
+	const [modules] = createResource(listModules);
 	const [roles] = createResource(listRoles);
 
 	const [profile] = createResource(() => params.id ?? "", getProfile);
@@ -172,7 +169,6 @@ const ProfilePage = () => {
 		try {
 			const payload = {
 				...formValues,
-				tenantId: authStore.user?.tenantId || "",
 				deletedAt: null,
 			};
 

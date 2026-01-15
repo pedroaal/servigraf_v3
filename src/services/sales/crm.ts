@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Crm } from "~/types/appwrite";
 
 export const listCrm = async (
-	tenantId: string,
 	options?: {
 		assignedId?: string;
 		contactId?: string;
@@ -15,7 +14,6 @@ export const listCrm = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.assignedId)
 		queries.push(Query.equal("assignedId", options.assignedId));

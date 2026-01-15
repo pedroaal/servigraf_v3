@@ -4,14 +4,12 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Users } from "~/types/appwrite";
 
 export const listUsers = async (
-	tenantId: string,
 	options?: {
 		authId?: string;
 	},
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 		Query.select(['*', 'profileId.name'])
 	];
 	if (options?.authId) {

@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Invoices } from "~/types/appwrite";
 
 export const listInvoices = async (
-	tenantId: string,
 	options?: {
 		clientId?: string;
 		status?: "pending" | "paid";
@@ -14,7 +13,6 @@ export const listInvoices = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.clientId)
 		queries.push(Query.equal("clientId", options.clientId));

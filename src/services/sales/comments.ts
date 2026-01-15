@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Comments } from "~/types/appwrite";
 
 export const listComments = async (
-	tenantId: string,
 	options?: {
 		contactId?: string;
 		parentId?: string;
@@ -12,7 +11,6 @@ export const listComments = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.contactId)
 		queries.push(Query.equal("contactId", options.contactId));

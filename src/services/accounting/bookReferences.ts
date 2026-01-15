@@ -3,13 +3,13 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { BookReferences } from "~/types/appwrite";
 
-export const listBookReferences = async (tenantId: string) => {
+export const listBookReferences = async () => {
 	const res = await tables.listRows<BookReferences>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.BOOK_REFERENCES,
-		queries: [Query.isNull("deletedAt"), Query.equal("tenantId", tenantId)],
+		queries: [Query.isNull("deletedAt")},
 	});
-	return res;
+return res;
 };
 
 export const getBookReference = async (id: string) => {

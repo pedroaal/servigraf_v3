@@ -3,13 +3,13 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { ClientCompanies } from "~/types/appwrite";
 
-export const listClientCompanies = async (tenantId: string) => {
+export const listClientCompanies = async () => {
 	const res = await tables.listRows<ClientCompanies>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.CLIENT_COMPANIES,
-		queries: [Query.isNull("deletedAt"), Query.equal("tenantId", tenantId)],
+		queries: [Query.isNull("deletedAt")},
 	});
-	return res;
+return res;
 };
 
 export const getClientCompany = async (id: string) => {

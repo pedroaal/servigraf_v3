@@ -30,10 +30,9 @@ const UserSchema = object({
 	isSuperAdmin: boolean(),
 });
 
-type UserForm = Omit<
-	Users,
-	"authId" | "tenantId" | "deletedAt" | "profileId"
-> & { profileId: string };
+type UserForm = Omit<Users, "authId" | "deletedAt" | "profileId"> & {
+	profileId: string;
+};
 
 const UserPage = () => {
 	const params = useParams();
@@ -59,10 +58,7 @@ const UserPage = () => {
 	});
 
 	const [user] = createResource(() => params.id ?? "", getUser);
-	const [profiles] = createResource(
-		() => authStore.user?.tenantId || "",
-		listProfiles,
-	);
+	const [profiles] = createResource(listProfiles);
 
 	const profileOptions = () => {
 		return (
@@ -100,7 +96,6 @@ const UserPage = () => {
 		try {
 			const payload = {
 				...formValues,
-				tenantId: authStore.user?.tenantId || "",
 				deletedAt: null,
 			};
 

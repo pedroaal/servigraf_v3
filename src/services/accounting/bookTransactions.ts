@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { BookTransactions } from "~/types/appwrite";
 
 export const listBookTransactions = async (
-	tenantId: string,
 	options?: {
 		dateFrom?: string;
 		dateTo?: string;
@@ -13,7 +12,6 @@ export const listBookTransactions = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.dateFrom)
 		queries.push(Query.equal("dateFrom", options.dateFrom));

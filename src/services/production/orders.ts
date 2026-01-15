@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Orders } from "~/types/appwrite";
 
 export const listOrders = async (
-	tenantId: string,
 	options?: {
 		userId?: string;
 		clientId?: string;
@@ -15,7 +14,6 @@ export const listOrders = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.clientId)

@@ -4,7 +4,6 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Contacts } from "~/types/appwrite";
 
 export const listContacts = async (
-	companyId: string,
 	options?: {
 		clientCompanyId?: string;
 		searchName?: string;
@@ -12,7 +11,6 @@ export const listContacts = async (
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 	if (options?.clientCompanyId)
 		queries.push(Query.equal("clientCompanyId", options.clientCompanyId));

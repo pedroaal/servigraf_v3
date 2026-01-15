@@ -3,13 +3,13 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Withholdings } from "~/types/appwrite";
 
-export const listWithholdings = async (tenantId: string) => {
+export const listWithholdings = async () => {
 	const res = await tables.listRows<Withholdings>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.WITHHOLDINGS,
-		queries: [Query.isNull("deletedAt"), Query.equal("tenantId", tenantId)],
+		queries: [Query.isNull("deletedAt")},
 	});
-	return res;
+return res;
 };
 
 export const getWithholding = async (id: string) => {

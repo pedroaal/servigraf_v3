@@ -4,14 +4,12 @@ import { makeId, tables } from "~/lib/appwrite";
 import type { Categories } from "~/types/appwrite";
 
 export const listCategories = async (
-	tenantId: string,
 	options?: {
 		search?: string;
 	},
 ) => {
 	const queries = [
 		Query.isNull("deletedAt"),
-		Query.equal("tenantId", tenantId),
 	];
 
 	if (options?.search) queries.push(Query.equal("name", options.search));

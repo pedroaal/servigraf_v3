@@ -3,13 +3,13 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Payroll } from "~/types/appwrite";
 
-export const listPayrolls = async (tenantId: string) => {
+export const listPayrolls = async () => {
 	const res = await tables.listRows<Payroll>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PAYROLL,
-		queries: [Query.isNull("deletedAt"), Query.equal("tenantId", tenantId)],
+		queries: [Query.isNull("deletedAt")},
 	});
-	return res;
+return res;
 };
 
 export const getPayroll = async (id: string) => {
