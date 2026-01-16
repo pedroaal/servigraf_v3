@@ -11,6 +11,7 @@ type AppStore = {
 	alerts: Array<IAlert>;
 	loaders: Array<string>;
 	showModal: string | null;
+	modalProps: Record<string, any> | null;
 };
 
 type AppActions = {
@@ -18,12 +19,12 @@ type AppActions = {
 	removeAlert: (id: string) => void;
 	addLoader: () => string;
 	removeLoader: (id: string) => void;
-	openModal: (id: string) => void;
+	openModal: (id: string, props?: Record<string, any>) => void;
 	closeModal: () => void;
 };
 
 export const AppContext = createContext<[AppStore, AppActions]>([
-	{ alerts: [], loaders: [], showModal: null },
+	{ alerts: [], loaders: [], showModal: null, modalProps: null },
 	{
 		addAlert: () => "",
 		removeAlert: () => null,
@@ -56,6 +57,7 @@ export const AppProvider: ParentComponent = (props) => {
 		alerts: [],
 		loaders: [],
 		showModal: null,
+		modalProps: null,
 	});
 
 	const timeMap = new Map<string, number>();
@@ -105,12 +107,12 @@ export const AppProvider: ParentComponent = (props) => {
 		setStore("loaders", (state) => state.filter((loader) => loader !== id));
 	};
 
-	const openModal = (id: string) => {
-		setStore("showModal", id);
+	const openModal = (id: string, props?: Record<string, any>) => {
+		setStore({ showModal: id, modalProps: props });
 	};
 
 	const closeModal = () => {
-		setStore("showModal", null);
+		setStore({ showModal: null, modalProps: null });
 	};
 
 	return (
