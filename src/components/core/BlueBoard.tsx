@@ -44,7 +44,7 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 			<div class="card-body p-4">{props.children}</div>
 
 			<div class="bg-base-200 rounded-b-box p-2 d-print-none">
-				<div class="flex gap-2">
+				<div class="flex flex-col md:flex-row gap-2">
 					<div class="flex-1 flex gap-2">
 						<For each={props.links ?? []}>
 							{(item) => (
@@ -52,6 +52,7 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 									href={item.href}
 									class="btn btn-primary btn-link btn-sm"
 									aria-disabled={item.disabled}
+									classList={{ "btn-disabled": item.disabled }}
 								>
 									{item.label}
 									<FaSolidChevronRight size={16} />

@@ -147,6 +147,7 @@ const OrderPage = () => {
 						{
 							href: Routes.order,
 							label: "Nueva Orden",
+							disabled: !isEdit(),
 						},
 					]}
 					actions={[
