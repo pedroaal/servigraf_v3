@@ -1,4 +1,4 @@
-import { createResource } from "solid-js/types/server/rendering.js";
+import { createResource } from "solid-js";
 import { Modals } from "~/config/modals";
 import { useApp } from "~/context/app";
 import { getArea } from "~/services/production/areas";
