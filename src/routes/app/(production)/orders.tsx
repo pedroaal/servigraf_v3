@@ -1,144 +1,162 @@
 import { Title } from "@solidjs/meta";
-import { FaSolidPlus } from "solid-icons/fa";
-import { createSignal, For } from "solid-js";
-import DashboardLayout from "~/components/layout/Dashboard";
-import OrderModal from "~/components/production/OrderModal";
-import { Modals } from "~/config/modals";
-import { useApp } from "~/context/app";
+import { useNavigate } from "@solidjs/router";
+import {
+	FaSolidArrowRightArrowLeft,
+	FaSolidCheck,
+	FaSolidListCheck,
+	FaSolidPencil,
+	FaSolidTrash,
+	FaSolidXmark,
+} from "solid-icons/fa";
+import { createResource, For, Match, Switch } from "solid-js";
 
-interface Pedido {
-	id: string;
-	codigo: string;
-	cliente: string;
-	fecha_pedido: string;
-	fecha_entrega: string;
-	total: number;
-	status: string;
-}
+import BlueBoard from "~/components/core/BlueBoard";
+import { ConfirmModal } from "~/components/core/Modal";
+import DashboardLayout from "~/components/layout/Dashboard";
+
+import { Modals } from "~/config/modals";
+import { Routes } from "~/config/routes";
+import { useApp } from "~/context/app";
+import { deleteOrder, listOrders } from "~/services/production/orders";
 
 const OrdersPage = () => {
-	const [pedidos, setPedidos] = createSignal<Pedido[]>([
-		// Example data - in real app this would come from Appwrite
-	]);
-	const { openModal } = useApp();
+	const navigate = useNavigate();
+	const { addAlert, closeModal } = useApp();
 
-	const statusClass = (status: string) => {
-		switch (status) {
-			case "pending":
-				return "badge badge-warning";
-			case "processing":
-				return "badge badge-info";
-			case "completed":
-				return "badge badge-success";
-			case "cancelled":
-				return "badge badge-error";
-			default:
-				return "badge";
+	const [orders, { refetch }] = createResource({}, listOrders);
+
+	const goTo = (orderId: string) => {
+		navigate(`${Routes.order}/${orderId}`);
+	};
+
+	const handleDelete = async ({
+		orderId,
+		name,
+	}: {
+		orderId: string;
+		name: string;
+	}) => {
+		const confirm = window.confirm(
+			`¿Está seguro de eliminar la orden "${name}"? `,
+		);
+		if (!confirm) return;
+
+		try {
+			await deleteOrder(orderId);
+			addAlert({ type: "success", message: "Orden eliminada con éxito" });
+			refetch();
+		} catch (error: any) {
+			addAlert({
+				type: "error",
+				message: error.message || "Error al eliminar orden",
+			});
 		}
 	};
 
 	return (
 		<>
 			<Title>Pedidos - Grafos</Title>
-
 			<DashboardLayout>
-				<div class="space-y-6">
-					<div class="flex justify-between items-center">
-						<h1 class="text-3xl font-bold">Gestión de Pedidos</h1>
-						<button
-							class="btn btn-primary"
-							type="button"
-							onClick={[openModal, Modals.Order]}
-						>
-							<FaSolidPlus size={20} />
-							Nuevo Pedido
-						</button>
-					</div>
-
-					{/* Stats */}
-					<div class="stats stats-vertical md:stats-horizontal shadow w-full bg-base-100">
-						<div class="stat">
-							<div class="stat-title">Pedidos Pendientes</div>
-							<div class="stat-value text-warning">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">En Proceso</div>
-							<div class="stat-value text-info">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Completados</div>
-							<div class="stat-value text-success">0</div>
-						</div>
-						<div class="stat">
-							<div class="stat-title">Total del Mes</div>
-							<div class="stat-value text-primary">$0</div>
-						</div>
-					</div>
-
-					{/* Table */}
-					<div class="card bg-base-100 shadow-xl">
-						<div class="card-body">
-							<h2 class="card-title">Lista de Pedidos</h2>
-
-							<div class="overflow-x-auto">
-								<table class="table table-zebra">
-									<thead>
+				<BlueBoard
+					title="Gestionar Perfiles"
+					links={[
+						{
+							href: Routes.order,
+							label: "Nueva Orden",
+						},
+					]}
+					modals={[
+						{
+							key: Modals.SearchOrder,
+							label: "Buscar Orden",
+						},
+					]}
+				>
+					<div class="overflow-x-auto">
+						<table class="table table-zebra">
+							<thead>
+								<tr>
+									<th class="w-1/12">Estado</th>
+									<th>Numero</th>
+									<th>Cliente</th>
+									<th class="w-1/4">Detalle</th>
+									<th>Cant</th>
+									<th class="w-1/12">Procesos</th>
+									<th class="w-1/12">Crud</th>
+								</tr>
+							</thead>
+							<tbody>
+								<For each={orders()?.rows || []}>
+									{(item) => (
 										<tr>
-											<th>Código</th>
-											<th>Cliente</th>
-											<th>Fecha Pedido</th>
-											<th>Fecha Entrega</th>
-											<th>Total</th>
-											<th>Estado</th>
-											<th>Acciones</th>
+											<td>
+												<Switch fallback={<div>Not Found</div>}>
+													<Match when={item.status === "pending"}>
+														<FaSolidListCheck size={24} class="text-warning" />
+													</Match>
+													<Match when={item.status === "paid"}>
+														<FaSolidCheck size={24} class="text-success" />
+													</Match>
+													<Match when={item.status === "canceled"}>
+														<FaSolidXmark size={24} class="text-error" />
+													</Match>
+													<Match when={item.status === "other"}>
+														<FaSolidArrowRightArrowLeft
+															size={24}
+															class="text-info"
+														/>
+													</Match>
+												</Switch>
+											</td>
+											<td>{item.orderNumber}</td>
+											<td>{item.clientId?.companyId?.name ?? ""}</td>
+											<td>{item.description}</td>
+											<td>{item.quantity}</td>
+											<td>{item.processes.length}</td>
+											<td>
+												<div class="flex gap-2">
+													<button
+														type="button"
+														class="btn btn-sm btn-square btn-ghost"
+														onClick={[goTo, item.$id]}
+													>
+														<FaSolidPencil size={16} />
+													</button>
+													<button
+														type="button"
+														class="btn btn-sm btn-square btn-ghost btn-error"
+														onClick={[
+															handleDelete,
+															{ orderId: item.$id, name: item.orderNumber },
+														]}
+													>
+														<FaSolidTrash size={16} />
+													</button>
+												</div>
+											</td>
 										</tr>
-									</thead>
-									<tbody>
-										<For
-											each={pedidos()}
-											fallback={
-												<tr>
-													<td colspan="7" class="text-center py-8">
-														No hay pedidos registrados. Haz clic en "Nuevo
-														Pedido" para crear uno.
-													</td>
-												</tr>
-											}
-										>
-											{(pedido) => (
-												<tr>
-													<td>{pedido.codigo}</td>
-													<td>{pedido.cliente}</td>
-													<td>{pedido.fecha_pedido}</td>
-													<td>{pedido.fecha_entrega}</td>
-													<td>${pedido.total.toFixed(2)}</td>
-													<td>
-														<span class={statusClass(pedido.status)}>
-															{pedido.status}
-														</span>
-													</td>
-													<td>
-														<div class="join">
-															<button class="btn btn-sm join-item">Ver</button>
-															<button class="btn btn-sm join-item">
-																Editar
-															</button>
-															<button class="btn btn-sm btn-error join-item">
-																Eliminar
-															</button>
-														</div>
-													</td>
-												</tr>
-											)}
-										</For>
-									</tbody>
-								</table>
-							</div>
-						</div>
+									)}
+								</For>
+							</tbody>
+							<tfoot></tfoot>
+						</table>
 					</div>
-				</div>
-
-				<OrderModal />
+				</BlueBoard>
+				<ConfirmModal
+					id={Modals.SearchOrder}
+					title="Buscar Orden"
+					message="Buscar orden de trabajo por numero"
+					onConfirm={() => goTo("input-value")}
+					onCancel={() => closeModal()}
+					confirmText="Buscar"
+				>
+					<input class="input input-bordered input-sm w-full max-w-xs" />
+				</ConfirmModal>
+				<ConfirmModal
+					title="Eliminar Orden"
+					message="Buscar orden de trabajo por numero"
+					onConfirm={() => goTo("input-value")}
+				></ConfirmModal>
 			</DashboardLayout>
 		</>
 	);
