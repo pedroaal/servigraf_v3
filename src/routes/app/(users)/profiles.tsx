@@ -1,16 +1,12 @@
 import { Title } from "@solidjs/meta";
 import { useNavigate } from "@solidjs/router";
-import {
-	FaSolidCheck,
-	FaSolidPencil,
-	FaSolidTrash,
-	FaSolidXmark,
-} from "solid-icons/fa";
+import { FaSolidCheck, FaSolidXmark } from "solid-icons/fa";
 import { createResource, For } from "solid-js";
 
 import BlueBoard from "~/components/core/BlueBoard";
 import Breadcrumb from "~/components/core/Breadcrumb";
 import EmptyTable from "~/components/core/EmptyTable";
+import RowActions from "~/components/core/RowActions";
 import Table from "~/components/core/Table";
 import DashboardLayout from "~/components/layout/Dashboard";
 
@@ -24,17 +20,11 @@ const ProfilesPage = () => {
 
 	const [profiles, { refetch }] = createResource(listProfiles);
 
-	const goToProfile = (profileId: string) => {
+	const goTo = (profileId: string) => {
 		navigate(`${Routes.profile}/${profileId}`);
 	};
 
-	const handleDelete = async ({
-		profileId,
-		name,
-	}: {
-		profileId: string;
-		name: string;
-	}) => {
+	const handleDelete = async (profileId: string, name: string) => {
 		const confirm = window.confirm(
 			`¿Está seguro de eliminar el perfil "${name}"? `,
 		);
@@ -87,25 +77,10 @@ const ProfilesPage = () => {
 									<td>{item.name}</td>
 									<td>{item.description}</td>
 									<td>
-										<div class="flex gap-2">
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost"
-												onClick={[goToProfile, item.$id]}
-											>
-												<FaSolidPencil size={16} />
-											</button>
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost btn-error"
-												onClick={[
-													handleDelete,
-													{ profileId: item.$id, name: item.name },
-												]}
-											>
-												<FaSolidTrash size={16} />
-											</button>
-										</div>
+										<RowActions
+											onEdit={() => goTo(item.$id)}
+											onDelete={() => handleDelete(item.$id, item.name)}
+										/>
 									</td>
 								</tr>
 							)}

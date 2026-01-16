@@ -4,8 +4,6 @@ import {
 	FaSolidArrowRightArrowLeft,
 	FaSolidCheck,
 	FaSolidListCheck,
-	FaSolidPencil,
-	FaSolidTrash,
 	FaSolidXmark,
 } from "solid-icons/fa";
 import { createResource, For, Match, Switch } from "solid-js";
@@ -13,6 +11,7 @@ import { createResource, For, Match, Switch } from "solid-js";
 import BlueBoard from "~/components/core/BlueBoard";
 import Breadcrumb from "~/components/core/Breadcrumb";
 import { ConfirmModal } from "~/components/core/Modal";
+import RowActions from "~/components/core/RowActions";
 import Table from "~/components/core/Table";
 import DashboardLayout from "~/components/layout/Dashboard";
 
@@ -31,15 +30,9 @@ const OrdersPage = () => {
 		navigate(`${Routes.order}/${orderId}`);
 	};
 
-	const handleDelete = async ({
-		orderId,
-		name,
-	}: {
-		orderId: string;
-		name: string;
-	}) => {
+	const handleDelete = async (orderId: string, number: number) => {
 		const confirm = window.confirm(
-			`¿Está seguro de eliminar la orden "${name}"? `,
+			`¿Está seguro de eliminar la orden "${number}"? `,
 		);
 		if (!confirm) return;
 
@@ -108,31 +101,16 @@ const OrdersPage = () => {
 											</Match>
 										</Switch>
 									</td>
-									<td>{item.orderNumber}</td>
+									<td>{item.number}</td>
 									<td>{item.clientId?.companyId?.name ?? ""}</td>
 									<td>{item.description}</td>
 									<td>{item.quantity}</td>
 									<td>{item.processes.length}</td>
 									<td>
-										<div class="flex gap-2">
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost"
-												onClick={[goTo, item.$id]}
-											>
-												<FaSolidPencil size={16} />
-											</button>
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost btn-error"
-												onClick={[
-													handleDelete,
-													{ orderId: item.$id, name: item.orderNumber },
-												]}
-											>
-												<FaSolidTrash size={16} />
-											</button>
-										</div>
+										<RowActions
+											onEdit={() => goTo(item.$id)}
+											onDelete={() => handleDelete(item.$id, item.number)}
+										/>
 									</td>
 								</tr>
 							)}

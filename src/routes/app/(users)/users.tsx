@@ -1,28 +1,28 @@
 import { Title } from "@solidjs/meta";
 import { useNavigate } from "@solidjs/router";
-import {
-	FaSolidCheck,
-	FaSolidPencil,
-	FaSolidTrash,
-	FaSolidXmark,
-} from "solid-icons/fa";
+import { FaSolidCheck, FaSolidXmark } from "solid-icons/fa";
 import { createResource, For } from "solid-js";
+
 import BlueBoard from "~/components/core/BlueBoard";
 import Breadcrumb from "~/components/core/Breadcrumb";
 import EmptyTable from "~/components/core/EmptyTable";
+import RowActions from "~/components/core/RowActions";
 import Table from "~/components/core/Table";
 import DashboardLayout from "~/components/layout/Dashboard";
+
 import { Routes } from "~/config/routes";
 import { listUsers } from "~/services/users/users";
 
 const UsersPage = () => {
 	const navigate = useNavigate();
 
-	const [users] = createResource(listUsers);
+	const [users] = createResource({}, listUsers);
 
-	const goToUser = (userId: string) => {
+	const goTo = (userId: string) => {
 		navigate(`${Routes.user}/${userId}`);
 	};
+
+	const handleDelete = (userId: string, name: string) => {};
 
 	return (
 		<>
@@ -61,21 +61,10 @@ const UsersPage = () => {
 									<td>{item.lastName}</td>
 									<td>{item.profileId?.name || ""}</td>
 									<td>
-										<div class="flex gap-2">
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost"
-												onClick={[goToUser, item.$id]}
-											>
-												<FaSolidPencil size={16} />
-											</button>
-											<button
-												type="button"
-												class="btn btn-sm btn-square btn-ghost btn-error"
-											>
-												<FaSolidTrash size={16} />
-											</button>
-										</div>
+										<RowActions
+											onEdit={() => goTo(item.$id)}
+											onDelete={() => handleDelete(item.$id, item.firstName)}
+										/>
 									</td>
 								</tr>
 							)}
