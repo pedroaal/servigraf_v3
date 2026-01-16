@@ -5,6 +5,7 @@ import { createSignal, For, onCleanup } from "solid-js";
 import * as v from "valibot";
 
 import BlueBoard from "~/components/core/BlueBoard";
+import Breadcrumb from "~/components/core/Breadcrumb";
 import Input from "~/components/core/Input";
 import DashboardLayout from "~/components/layout/Dashboard";
 
@@ -66,41 +67,40 @@ const ordersDefault: OrderForm = {
 	paymentAmount: 0,
 	balance: 0,
 	notes: null,
-	deletedAt: null
-}
-
+	deletedAt: null,
+};
 
 type Material = Omit<OrderMaterials, "$id" | "orderId">;
 const materialDefault = {
-    materialId: null,
-    quantity: 0,
-    cutHeight: 0,
-    cutWidth: 0,
-    sizes: 0,
-    supplierId: null,
-    invoiceNumber: null,
-    total: 0,
-	deletedAt: null
+	materialId: null,
+	quantity: 0,
+	cutHeight: 0,
+	cutWidth: 0,
+	sizes: 0,
+	supplierId: null,
+	invoiceNumber: null,
+	total: 0,
+	deletedAt: null,
 };
 
 type Process = Omit<OrderProcesses, "$id" | "orderId">;
 const processDefault = {
 	processId: null,
-    frontColors: 0,
-    backColors: 0,
-    thousands: 0,
-    unitPrice: 0,
-    total: 0,
-    done: false,
-	deletedAt: null
+	frontColors: 0,
+	backColors: 0,
+	thousands: 0,
+	unitPrice: 0,
+	total: 0,
+	done: false,
+	deletedAt: null,
 };
 
 type Payment = Omit<OrderPayments, "$id" | "orderId" | "userId">;
 const paymentDefault = {
 	date: "",
-    method: "",
-    amount: 0,
-	deletedAt: null
+	method: "",
+	amount: 0,
+	deletedAt: null,
 };
 
 const OrderPage = () => {
@@ -204,6 +204,13 @@ const OrderPage = () => {
 		<>
 			<Title>Orden - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb
+					links={[
+						{ label: "Produccion" },
+						{ label: "Orden", route: Routes.orders },
+						{ label: "Nuevo" },
+					]}
+				/>
 				<BlueBoard
 					title="Gestionar Orden"
 					links={[

@@ -11,6 +11,7 @@ import {
 import { createResource, For, Match, Switch } from "solid-js";
 
 import BlueBoard from "~/components/core/BlueBoard";
+import Breadcrumb from "~/components/core/Breadcrumb";
 import { ConfirmModal } from "~/components/core/Modal";
 import DashboardLayout from "~/components/layout/Dashboard";
 
@@ -57,6 +58,7 @@ const OrdersPage = () => {
 		<>
 			<Title>Pedidos - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb links={[{ label: "Produccion" }, { label: "Ordenes" }]} />
 				<BlueBoard
 					title="Gestionar Perfiles"
 					links={[

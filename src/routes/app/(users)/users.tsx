@@ -7,11 +7,13 @@ import {
 	FaSolidXmark,
 } from "solid-icons/fa";
 import { createResource, For } from "solid-js";
+
+import Breadcrumb from "~/components/core/Breadcrumb";
 import BlueBoard from "~/components/core/BlueBoard";
 import EmptyTable from "~/components/core/EmptyTable";
 import DashboardLayout from "~/components/layout/Dashboard";
+
 import { Routes } from "~/config/routes";
-import { useAuth } from "~/context/auth";
 import { listUsers } from "~/services/users/users";
 
 const UsersPage = () => {
@@ -27,6 +29,7 @@ const UsersPage = () => {
 		<>
 			<Title>Usuarios - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb links={[{ label: "Usuarios" }, { label: "Usuarios" }]} />
 				<BlueBoard
 					title="Gestiónar Usuarios"
 					links={[

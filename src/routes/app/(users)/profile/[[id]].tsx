@@ -5,6 +5,7 @@ import { createEffect, createResource, createSignal, For, on } from "solid-js";
 import { boolean, object, string } from "valibot";
 
 import BlueBoard from "~/components/core/BlueBoard";
+import Breadcrumb from "~/components/core/Breadcrumb";
 import Checkbox from "~/components/core/Checkbox";
 import Input from "~/components/core/Input";
 import DashboardLayout from "~/components/layout/Dashboard";
@@ -211,6 +212,13 @@ const ProfilePage = () => {
 		<>
 			<Title>Perfil - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb
+					links={[
+						{ label: "Usuarios" },
+						{ label: "Perfil", route: Routes.profiles },
+						{ label: profile()?.name ?? "Nuevo" },
+					]}
+				/>
 				<BlueBoard
 					title="Gestionar Perfil"
 					actions={[

@@ -5,6 +5,7 @@ import { createEffect, createResource, on } from "solid-js";
 import { boolean, object, string } from "valibot";
 
 import BlueBoard from "~/components/core/BlueBoard";
+import Breadcrumb from "~/components/core/Breadcrumb";
 import Checkbox from "~/components/core/Checkbox";
 import Input from "~/components/core/Input";
 import Select from "~/components/core/Select";
@@ -132,6 +133,13 @@ const UserPage = () => {
 		<>
 			<Title>Usuario - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb
+					links={[
+						{ label: "Usuarios" },
+						{ label: "Usuario", route: Routes.users },
+						{ label: user()?.firstName ?? "Nuevo" },
+					]}
+				/>
 				<BlueBoard
 					title="Gesitonar Usuario"
 					actions={[

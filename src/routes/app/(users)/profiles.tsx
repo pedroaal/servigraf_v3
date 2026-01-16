@@ -7,9 +7,12 @@ import {
 	FaSolidXmark,
 } from "solid-icons/fa";
 import { createResource, For } from "solid-js";
+
 import BlueBoard from "~/components/core/BlueBoard";
+import Breadcrumb from "~/components/core/Breadcrumb";
 import EmptyTable from "~/components/core/EmptyTable";
 import DashboardLayout from "~/components/layout/Dashboard";
+
 import { Routes } from "~/config/routes";
 import { useApp } from "~/context/app";
 import { deleteProfile, listProfiles } from "~/services/users/profiles";
@@ -52,6 +55,7 @@ const ProfilesPage = () => {
 		<>
 			<Title>Perfiles - Grafos</Title>
 			<DashboardLayout>
+				<Breadcrumb links={[{ label: "Usuarios" }, { label: "Perfiles" }]} />
 				<BlueBoard
 					title="Gestionar Perfiles"
 					links={[
