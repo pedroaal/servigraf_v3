@@ -710,8 +710,8 @@
                     "array": false,
                     "elements": [
                         "primary",
-                        "secundary",
-                        "post-secundary",
+                        "secondary",
+                        "post-secondary",
                         "tertiary",
                         "other"
                     ],
@@ -3800,7 +3800,7 @@
                     "elements": [
                         "cash",
                         "transfer",
-                        "transfeexchange",
+                        "exchange",
                         "card"
                     ],
                     "format": "enum",

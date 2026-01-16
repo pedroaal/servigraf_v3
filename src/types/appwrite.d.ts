@@ -35,8 +35,8 @@ export enum PayrollBankAccountType {
 
 export enum PayrollEducationEducationLevel {
     PRIMARY = "primary",
-    SECUNDARY = "secundary",
-    POST_SECUNDARY = "post-secundary",
+    SECONDARY = "secondary",
+    POST_SECONDARY = "post-secondary",
     TERTIARY = "tertiary",
     OTHER = "other"
 }
@@ -75,7 +75,7 @@ export enum InvoicesStatus {
 export enum InvoicesPaymentType {
     CASH = "cash",
     TRANSFER = "transfer",
-    TRANSFEEXCHANGE = "transfeexchange",
+    EXCHANGE = "exchange",
     CARD = "card"
 }
 
@@ -341,6 +341,7 @@ export type Orders = Models.Row & {
     cutWidth: number;
     numberingStart: number;
     numberingEnd: number;
+
     materialTotal: number;
     orderTotal: number;
     paymentAmount: number;
