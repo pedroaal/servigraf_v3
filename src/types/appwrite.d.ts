@@ -133,7 +133,7 @@ export type Payroll = Models.Row & {
     bankAccountType: PayrollBankAccountType;
     bankAccountNumber: string;
     notes: string | null;
-    status: boolean;
+    active: boolean;
     scheduleId: Schedules;
     canOvertime: boolean;
     deletedAt: string | null;
@@ -215,7 +215,7 @@ export type PayrollEquipment = Models.Row & {
 
 export type Equipment = Models.Row & {
     name: string;
-    status: boolean;
+    active: boolean;
     deletedAt: string | null;
 }
 
@@ -228,7 +228,7 @@ export type Modules = Models.Row & {
 export type Profiles = Models.Row & {
     name: string;
     description: string;
-    status: boolean;
+    active: boolean;
     deletedAt: string | null;
 }
 
@@ -248,7 +248,7 @@ export type ProfileModules = Models.Row & {
 export type Users = Models.Row & {
     authId: string;
     idNumber: string;
-    status: boolean;
+    active: boolean;
     reserveOrder: boolean;
     bookAccess: boolean;
     profitAccess: boolean;
@@ -422,12 +422,12 @@ export type OrderInks = Models.Row & {
 export type Materials = Models.Row & {
     name: string;
     categoryId: Categories;
-    isColor: boolean;
+    hasColor: boolean;
     height: number | null;
     width: number | null;
     price: number | null;
     hasUv: boolean;
-    isLaminated: boolean;
+    hasLaminated: boolean;
     deletedAt: string | null;
 }
 
@@ -446,7 +446,7 @@ export type OrderMaterials = Models.Row & {
 
 export type Taxes = Models.Row & {
     percentage: number;
-    status: boolean;
+    active: boolean;
     deletedAt: string | null;
 }
 
@@ -470,14 +470,14 @@ export type BillingCompanies = Models.Row & {
     sourceWithholdingId: Withholdings;
     canPrint: boolean;
     logo: string | null;
-    status: boolean;
+    active: boolean;
     deletedAt: string | null;
 }
 
 export type Withholdings = Models.Row & {
     percentage: number;
     description: string;
-    status: boolean;
+    active: boolean;
     deletedAt: string | null;
     type: WithholdingsType;
 }
@@ -582,7 +582,7 @@ export type Crm = Models.Row & {
     activityId: Activities;
     assignedId: Users;
     contactId: Contacts;
-    status: boolean;
+    active: boolean;
     source: string | null;
     campaign: string | null;
     note: string | null;

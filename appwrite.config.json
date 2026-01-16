@@ -526,7 +526,7 @@
                     "encrypt": false
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": false,
                     "array": false,
@@ -590,11 +590,11 @@
                     "orders": []
                 },
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
@@ -1231,7 +1231,7 @@
                     "encrypt": false
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": false,
                     "array": false,
@@ -1248,11 +1248,11 @@
             ],
             "indexes": [
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
@@ -1375,7 +1375,7 @@
                     "orders": []
                 },
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
@@ -1613,7 +1613,7 @@
                     "orders": []
                 },
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
@@ -3369,7 +3369,7 @@
                     "default": null
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": true,
                     "array": false,
@@ -3386,11 +3386,11 @@
             ],
             "indexes": [
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
@@ -3584,7 +3584,7 @@
                     "default": null
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": true,
                     "array": false,
@@ -3610,11 +3610,11 @@
                     "orders": []
                 },
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
@@ -3652,7 +3652,7 @@
                     "encrypt": false
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": true,
                     "array": false,
@@ -3681,11 +3681,11 @@
             ],
             "indexes": [
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
@@ -4639,7 +4639,7 @@
                     "side": "parent"
                 },
                 {
-                    "key": "status",
+                    "key": "active",
                     "type": "boolean",
                     "required": false,
                     "array": false,
@@ -4694,11 +4694,11 @@
                     ]
                 },
                 {
-                    "key": "statusIdx",
+                    "key": "activeIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "active"
                     ],
                     "orders": []
                 }
