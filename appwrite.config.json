@@ -1328,7 +1328,7 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Profiles",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "name",
@@ -1899,7 +1899,7 @@
             ]
         },
         {
-            "$id": "client-companies",
+            "$id": "companies",
             "$permissions": [
                 "create(\"users\")",
                 "read(\"users\")",
@@ -1907,14 +1907,14 @@
                 "delete(\"users\")"
             ],
             "databaseId": "6939a3d8001b326ff905",
-            "name": "Client Companies",
+            "name": "Companies",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "name",
                     "type": "string",
-                    "required": false,
+                    "required": true,
                     "array": false,
                     "size": 255,
                     "default": null,
@@ -1923,7 +1923,7 @@
                 {
                     "key": "ruc",
                     "type": "string",
-                    "required": false,
+                    "required": true,
                     "array": false,
                     "size": 16,
                     "default": null,
@@ -1936,6 +1936,15 @@
                     "array": false,
                     "format": "",
                     "default": null
+                },
+                {
+                    "key": "activity",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
                 }
             ],
             "indexes": [
@@ -1970,29 +1979,8 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Contacts",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
-                {
-                    "key": "clientCompanyId",
-                    "type": "relationship",
-                    "required": false,
-                    "array": false,
-                    "relatedTable": "client-companies",
-                    "relationType": "manyToOne",
-                    "twoWay": false,
-                    "twoWayKey": "contacts",
-                    "onDelete": "restrict",
-                    "side": "parent"
-                },
-                {
-                    "key": "activity",
-                    "type": "string",
-                    "required": false,
-                    "array": false,
-                    "size": 255,
-                    "default": null,
-                    "encrypt": false
-                },
                 {
                     "key": "title",
                     "type": "string",
@@ -2097,6 +2085,18 @@
                     "array": false,
                     "format": "",
                     "default": null
+                },
+                {
+                    "key": "companyId",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "companies",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "contacts",
+                    "onDelete": "restrict",
+                    "side": "parent"
                 }
             ],
             "indexes": [
@@ -2123,7 +2123,7 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Clients",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "contactId",
@@ -2131,18 +2131,6 @@
                     "required": false,
                     "array": false,
                     "relatedTable": "contacts",
-                    "relationType": "manyToOne",
-                    "twoWay": false,
-                    "twoWayKey": "clients",
-                    "onDelete": "restrict",
-                    "side": "parent"
-                },
-                {
-                    "key": "clientCompanyId",
-                    "type": "relationship",
-                    "required": false,
-                    "array": false,
-                    "relatedTable": "client-companies",
                     "relationType": "manyToOne",
                     "twoWay": false,
                     "twoWayKey": "clients",
@@ -2177,6 +2165,18 @@
                     "array": false,
                     "format": "",
                     "default": null
+                },
+                {
+                    "key": "companyId",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "companies",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "clients",
+                    "onDelete": "restrict",
+                    "side": "parent"
                 }
             ],
             "indexes": [
@@ -2250,7 +2250,7 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Orders",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "orderNumber",
@@ -2324,8 +2324,8 @@
                     "elements": [
                         "pending",
                         "paid",
-                        "nullified",
-                        "other"
+                        "other",
+                        "canceled"
                     ],
                     "format": "enum",
                     "default": null
@@ -2454,6 +2454,18 @@
                     "array": false,
                     "format": "",
                     "default": null
+                },
+                {
+                    "key": "processes",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "order-processes",
+                    "relationType": "oneToMany",
+                    "twoWay": true,
+                    "twoWayKey": "orderId",
+                    "onDelete": "cascade",
+                    "side": "parent"
                 }
             ],
             "indexes": [
@@ -2590,7 +2602,7 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Areas",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "name",
@@ -2749,18 +2761,6 @@
             "rowSecurity": false,
             "columns": [
                 {
-                    "key": "orderId",
-                    "type": "relationship",
-                    "required": false,
-                    "array": false,
-                    "relatedTable": "orders",
-                    "relationType": "manyToOne",
-                    "twoWay": false,
-                    "twoWayKey": "processes",
-                    "onDelete": "restrict",
-                    "side": "parent"
-                },
-                {
                     "key": "processId",
                     "type": "relationship",
                     "required": false,
@@ -2818,7 +2818,7 @@
                     "default": null
                 },
                 {
-                    "key": "status",
+                    "key": "done",
                     "type": "boolean",
                     "required": false,
                     "array": false,
@@ -2831,15 +2831,27 @@
                     "array": false,
                     "format": "",
                     "default": null
+                },
+                {
+                    "key": "orderId",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "orders",
+                    "relationType": "oneToMany",
+                    "twoWay": true,
+                    "twoWayKey": "processes",
+                    "onDelete": "cascade",
+                    "side": "child"
                 }
             ],
             "indexes": [
                 {
-                    "key": "statusIdx",
+                    "key": "doneIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "status"
+                        "done"
                     ],
                     "orders": []
                 }
@@ -2856,7 +2868,7 @@
             "databaseId": "6939a3d8001b326ff905",
             "name": "Processes",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
                 {
                     "key": "areaId",
@@ -2907,7 +2919,7 @@
                     "encrypt": false
                 },
                 {
-                    "key": "type",
+                    "key": "internal",
                     "type": "boolean",
                     "required": false,
                     "array": false,
@@ -2940,11 +2952,11 @@
             ],
             "indexes": [
                 {
-                    "key": "typeIdx",
+                    "key": "internalIdx",
                     "type": "key",
                     "status": "available",
                     "columns": [
-                        "type"
+                        "internal"
                     ],
                     "orders": []
                 },
@@ -3221,7 +3233,7 @@
             ]
         },
         {
-            "$id": "material-requests",
+            "$id": "order-materials",
             "$permissions": [
                 "create(\"users\")",
                 "read(\"users\")",
@@ -3229,7 +3241,7 @@
                 "delete(\"users\")"
             ],
             "databaseId": "6939a3d8001b326ff905",
-            "name": "Material Requests",
+            "name": "Order Materials",
             "enabled": true,
             "rowSecurity": false,
             "columns": [
@@ -3241,7 +3253,7 @@
                     "relatedTable": "orders",
                     "relationType": "manyToOne",
                     "twoWay": false,
-                    "twoWayKey": "material-requests",
+                    "twoWayKey": "order-materials",
                     "onDelete": "restrict",
                     "side": "parent"
                 },
@@ -3253,7 +3265,7 @@
                     "relatedTable": "materials",
                     "relationType": "manyToOne",
                     "twoWay": false,
-                    "twoWayKey": "material-requests",
+                    "twoWayKey": "order-materials",
                     "onDelete": "restrict",
                     "side": "parent"
                 },
@@ -3301,7 +3313,7 @@
                     "relatedTable": "suppliers",
                     "relationType": "manyToOne",
                     "twoWay": false,
-                    "twoWayKey": "material-requests",
+                    "twoWayKey": "order-materials",
                     "onDelete": "restrict",
                     "side": "parent"
                 },
