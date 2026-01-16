@@ -8,6 +8,7 @@ import { useApp } from "~/context/app";
 
 interface IAction {
 	label: string;
+	disabled?: boolean;
 }
 
 interface IButton extends IAction {
@@ -47,7 +48,11 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 					<div class="flex-1 flex gap-2">
 						<For each={props.links ?? []}>
 							{(item) => (
-								<A href={item.href} class="btn btn-primary btn-link btn-sm">
+								<A
+									href={item.href}
+									class="btn btn-primary btn-link btn-sm"
+									aria-disabled={item.disabled}
+								>
 									{item.label}
 									<FaSolidChevronRight size={16} />
 								</A>
@@ -62,6 +67,7 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 									type="button"
 									class="btn btn-primary btn-outline btn-sm"
 									onClick={[openModal, item.key]}
+									disabled={item.disabled}
 								>
 									{item.label}
 								</button>
@@ -74,6 +80,7 @@ const BlueBoard: ParentComponent<IProps> = (props) => {
 									type={item.form ? "submit" : "button"}
 									onClick={item.onClick}
 									form={item.form}
+									disabled={item.disabled}
 								>
 									{item.label}
 								</button>

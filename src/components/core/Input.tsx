@@ -5,17 +5,18 @@ interface IProps {
 	label?: string;
 	type?: "text" | "email" | "tel" | "password" | "url" | "date" | "number";
 	placeholder?: string;
-	value: string | undefined;
+	value?: string | number | string[];
 	required?: boolean;
 	disabled?: boolean;
-	readonly?: boolean;
+	readOnly?: boolean;
+	step?: string;
 	name: string;
-	error: string;
+	error?: string;
 	autofocus?: boolean;
-	ref: (element: HTMLInputElement) => void;
-	onInput: JSX.EventHandler<HTMLInputElement, InputEvent>;
-	onChange: JSX.EventHandler<HTMLInputElement, Event>;
-	onBlur: JSX.EventHandler<HTMLInputElement, FocusEvent>;
+	ref?: (element: HTMLInputElement) => void;
+	onInput?: JSX.EventHandler<HTMLInputElement, InputEvent>;
+	onChange?: JSX.EventHandler<HTMLInputElement, Event>;
+	onBlur?: JSX.EventHandler<HTMLInputElement, FocusEvent>;
 }
 
 const Input: Component<IProps> = (props) => {

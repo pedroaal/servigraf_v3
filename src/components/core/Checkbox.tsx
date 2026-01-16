@@ -7,14 +7,14 @@ interface IProps {
 	placeholder?: string;
 	required?: boolean;
 	disabled?: boolean;
-	readonly?: boolean;
+	readOnly?: boolean;
 	name: string;
 	error?: string;
 	autofocus?: boolean;
-	ref: (element: HTMLInputElement) => void;
-	onInput: JSX.EventHandler<HTMLInputElement, InputEvent>;
-	onChange: JSX.EventHandler<HTMLInputElement, Event>;
-	onBlur: JSX.EventHandler<HTMLInputElement, FocusEvent>;
+	ref?: (element: HTMLInputElement) => void;
+	onInput?: JSX.EventHandler<HTMLInputElement, InputEvent>;
+	onChange?: JSX.EventHandler<HTMLInputElement, Event>;
+	onBlur?: JSX.EventHandler<HTMLInputElement, FocusEvent>;
 }
 
 const Checkbox: Component<IProps> = (props) => {

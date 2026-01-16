@@ -7,15 +7,14 @@ interface IProps {
 	placeholder?: string;
 	required?: boolean;
 	disabled?: boolean;
-	readonly?: boolean;
 	value?: string | number | string[] | undefined;
 	name: string;
 	error?: string;
 	autofocus?: boolean;
-	ref: (element: HTMLSelectElement) => void;
-	onInput: JSX.EventHandler<HTMLSelectElement, InputEvent>;
-	onChange: JSX.EventHandler<HTMLSelectElement, Event>;
-	onBlur: JSX.EventHandler<HTMLSelectElement, FocusEvent>;
+	ref?: (element: HTMLSelectElement) => void;
+	onInput?: JSX.EventHandler<HTMLSelectElement, InputEvent>;
+	onChange?: JSX.EventHandler<HTMLSelectElement, Event>;
+	onBlur?: JSX.EventHandler<HTMLSelectElement, FocusEvent>;
 }
 
 const Select: Component<IProps> = (props) => {
