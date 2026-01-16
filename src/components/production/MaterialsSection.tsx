@@ -1,0 +1,199 @@
+import { FaSolidPlus, FaSolidTrashCan, FaSolidXmark } from "solid-icons/fa";
+import { type Accessor, type Component, For, type Setter } from "solid-js";
+
+import Input from "~/components/core/Input";
+import Table from "~/components/core/Table";
+
+import type { OrderMaterials } from "~/types/appwrite";
+
+interface IProps {
+	state: Accessor<Array<MaterialForm>>;
+	setState: Setter<Array<MaterialForm>>;
+}
+
+export type MaterialForm = Omit<
+	OrderMaterials,
+	"$id" | "orderId" | "materialId" | "supplierId"
+> & { materialId: string; supplierId: string };
+
+const materialDefault: MaterialForm = {
+	materialId: "",
+	quantity: 0,
+	cutHeight: 0,
+	cutWidth: 0,
+	sizes: 0,
+	supplierId: "",
+	invoiceNumber: null,
+	total: 0,
+	deletedAt: null,
+};
+
+const MaterialsSection: Component<IProps> = (props) => {
+	const total = () =>
+		props.state().reduce((sum, item) => sum + (Number(item.total) || 0), 0);
+
+	const add = (current?: Partial<MaterialForm>) =>
+		props.setState((prev) => [...prev, { ...materialDefault, ...current }]);
+
+	const remove = (idx: number) =>
+		props.setState((prev) => prev.filter((_, i) => i !== idx));
+
+	const update = (idx: number, patch: Partial<MaterialForm>) =>
+		props.setState((prev) =>
+			prev.map((item, i) => (i === idx ? { ...item, ...patch } : item)),
+		);
+
+	return (
+		<div class="mt-6">
+			<div class="flex gap-2">
+				<h6 class="font-semibold grow">Materiales</h6>
+				<button type="button" class="btn btn-sm" onClick={[props.setState, []]}>
+					<FaSolidTrashCan size={16} />
+				</button>
+				<button type="button" class="btn btn-sm btn-ghost" onClick={[add, {}]}>
+					<FaSolidPlus size={16} />
+				</button>
+			</div>
+			<Table
+				headers={[
+					{ label: "" },
+					{ label: "Material" },
+					{ label: "Cantidad", class: "text-center" },
+					{ label: "Corte A", class: "text-center" },
+					{ label: "Corte An", class: "text-center" },
+					{ label: "Tamaños", class: "text-center" },
+					{ label: "Proveedor", class: "text-center" },
+					{ label: "Factura", class: "text-center" },
+					{ label: "Total", class: "text-center" },
+				]}
+				footer={
+					<tr>
+						<td colspan={8} class="text-right font-bold">
+							Total material $
+						</td>
+						<td class="text-center font-bold">{total().toFixed(4)}</td>
+					</tr>
+				}
+			>
+				<For each={props.state()}>
+					{(item, idx) => (
+						<tr>
+							<td>
+								<button
+									type="button"
+									class="btn btn-ghost btn-sm"
+									onClick={() => remove(idx())}
+								>
+									<FaSolidXmark size={16} />
+								</button>
+							</td>
+							<td>
+								<Input
+									name="materialId"
+									type="text"
+									value={item.materialId || ""}
+									onInput={(e) =>
+										update(idx(), {
+											materialId: (e.target as HTMLInputElement).value,
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="quantity"
+									type="number"
+									value={item.quantity || 0}
+									onInput={(e) =>
+										update(idx(), {
+											quantity: Number((e.target as HTMLInputElement).value),
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="cutHeight"
+									type="number"
+									step="0.01"
+									value={item.cutHeight || 0}
+									onInput={(e) =>
+										update(idx(), {
+											cutHeight: Number((e.target as HTMLInputElement).value),
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="cutWidth"
+									type="number"
+									step="0.01"
+									value={item.cutWidth || 0}
+									onInput={(e) =>
+										update(idx(), {
+											cutWidth: Number((e.target as HTMLInputElement).value),
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="sizes"
+									type="number"
+									value={item.sizes || 0}
+									onInput={(e) =>
+										update(idx(), {
+											sizes: Number((e.target as HTMLInputElement).value),
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="supplierId"
+									type="text"
+									value={item.supplierId || ""}
+									onInput={(e) =>
+										update(idx(), {
+											supplierId: (e.target as HTMLInputElement).value,
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="invoiceNumber"
+									type="number"
+									value={item.invoiceNumber || 0}
+									onInput={(e) =>
+										update(idx(), {
+											invoiceNumber: Number(
+												(e.target as HTMLInputElement).value,
+											),
+										})
+									}
+								/>
+							</td>
+							<td>
+								<Input
+									name="total"
+									type="number"
+									step="0.0001"
+									value={item.total || 0}
+									onInput={(e) => {
+										update(idx(), {
+											total: Number((e.target as HTMLInputElement).value),
+										});
+									}}
+								/>
+							</td>
+						</tr>
+					)}
+				</For>
+			</Table>
+		</div>
+	);
+};
+
+export default MaterialsSection;
