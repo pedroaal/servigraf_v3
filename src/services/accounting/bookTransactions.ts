@@ -3,15 +3,12 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { BookTransactions } from "~/types/appwrite";
 
-export const listBookTransactions = async (
-	options?: {
-		dateFrom?: string;
-		dateTo?: string;
-		transactionType?: boolean;
-	},
-) => {
-	const queries = [
-	];
+export const listBookTransactions = async (options?: {
+	dateFrom?: string;
+	dateTo?: string;
+	transactionType?: boolean;
+}) => {
+	const queries = [];
 	if (options?.dateFrom)
 		queries.push(Query.equal("dateFrom", options.dateFrom));
 	if (options?.dateTo) queries.push(Query.equal("dateTo", options.dateTo));

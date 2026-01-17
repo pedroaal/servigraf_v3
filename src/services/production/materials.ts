@@ -3,15 +3,11 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Materials } from "~/types/appwrite";
 
-export const listMaterials = async (
-	options?: {
-		categoryId?: string;
-		search?: string;
-	},
-) => {
-	const queries = [
-		Query.select(["*", "categoryId.name"]),
-	];
+export const listMaterials = async (options?: {
+	categoryId?: string;
+	search?: string;
+}) => {
+	const queries = [Query.select(["*", "categoryId.name"])];
 	if (options?.categoryId)
 		queries.push(Query.equal("categoryId", options.categoryId));
 	if (options?.search) queries.push(Query.equal("description", options.search));

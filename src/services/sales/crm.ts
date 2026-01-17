@@ -3,17 +3,14 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Crm } from "~/types/appwrite";
 
-export const listCrm = async (
-	options?: {
-		assignedId?: string;
-		contactId?: string;
-		status?: boolean;
-		dateFrom?: string;
-		dateTo?: string;
-	},
-) => {
-	const queries = [
-	];
+export const listCrm = async (options?: {
+	assignedId?: string;
+	contactId?: string;
+	status?: boolean;
+	dateFrom?: string;
+	dateTo?: string;
+}) => {
+	const queries = [];
 	if (options?.assignedId)
 		queries.push(Query.equal("assignedId", options.assignedId));
 	if (options?.contactId)

@@ -36,4 +36,4 @@ export enum Routes {
 	credentials = "/app/credentials",
 }
 
-export enum RoutesApi { }
+export enum RoutesApi {}

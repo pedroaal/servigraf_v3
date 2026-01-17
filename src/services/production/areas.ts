@@ -3,13 +3,8 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Areas } from "~/types/appwrite";
 
-export const listAreas = async (
-	options?: {
-		sort?: "asc" | "desc";
-	},
-) => {
-	const queries = [
-	];
+export const listAreas = async (options?: { sort?: "asc" | "desc" }) => {
+	const queries = [];
 	if (options?.sort) queries.push(Query.orderAsc("sortOrder"));
 
 	const res = await tables.listRows<Areas>({

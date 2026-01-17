@@ -3,13 +3,8 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Categories } from "~/types/appwrite";
 
-export const listCategories = async (
-	options?: {
-		search?: string;
-	},
-) => {
-	const queries = [
-	];
+export const listCategories = async (options?: { search?: string }) => {
+	const queries = [];
 
 	if (options?.search) queries.push(Query.equal("name", options.search));
 

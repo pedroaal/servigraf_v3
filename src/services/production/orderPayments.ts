@@ -44,7 +44,10 @@ export const createPayment = async (payload: OrderPayments) => {
 	return res;
 };
 
-export const updatePayment = async (id: string, payload: Partial<OrderPayments>) => {
+export const updatePayment = async (
+	id: string,
+	payload: Partial<OrderPayments>,
+) => {
 	const res = await tables.updateRow<OrderPayments>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.ORDER_PAYMENTS,

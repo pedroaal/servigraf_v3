@@ -3,17 +3,15 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Orders } from "~/types/appwrite";
 
-export const listOrders = async (
-	options?: {
-		userId?: string;
-		clientId?: string;
-		status?: string;
-		dateFrom?: string;
-		dateTo?: string;
-	},
-) => {
+export const listOrders = async (options?: {
+	userId?: string;
+	clientId?: string;
+	status?: string;
+	dateFrom?: string;
+	dateTo?: string;
+}) => {
 	const queries = [
-		Query.select(['*', 'clientId.companyId.name', 'processes.$id']),
+		Query.select(["*", "clientId.companyId.name", "processes.$id"]),
 	];
 	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.clientId)

@@ -30,7 +30,7 @@ export const createProfile = async (payload: Profiles, tenantId: string) => {
 			Permission.read(Role.team(tenantId)),
 			Permission.update(Role.team(tenantId)),
 			Permission.delete(Role.team(tenantId)),
-		]
+		],
 	});
 	return res;
 };

@@ -3,13 +3,10 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { ProductCategories } from "~/types/appwrite";
 
-export const listProductCategories = async (
-	options?: {
-		parentId?: string;
-	},
-) => {
-	const queries = [
-	];
+export const listProductCategories = async (options?: {
+	parentId?: string;
+}) => {
+	const queries = [];
 	if (options?.parentId)
 		queries.push(Query.equal("parentId", options.parentId));
 

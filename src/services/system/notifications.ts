@@ -3,14 +3,11 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Notifications } from "~/types/appwrite";
 
-export const listNotifications = async (
-	options?: {
-		userId?: string;
-		unreadOnly?: boolean;
-	},
-) => {
-	const queries = [
-	];
+export const listNotifications = async (options?: {
+	userId?: string;
+	unreadOnly?: boolean;
+}) => {
+	const queries = [];
 	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.unreadOnly) queries.push(Query.isNull("readAt"));
 

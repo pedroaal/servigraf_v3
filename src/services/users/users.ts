@@ -3,14 +3,8 @@ import { DATABASE_ID, TABLES } from "~/config/db";
 import { makeId, tables } from "~/lib/appwrite";
 import type { Users } from "~/types/appwrite";
 
-export const listUsers = async (
-	options?: {
-		authId?: string;
-	},
-) => {
-	const queries = [
-		Query.select(['*', 'profileId.name'])
-	];
+export const listUsers = async (options?: { authId?: string }) => {
+	const queries = [Query.select(["*", "profileId.name"])];
 	if (options?.authId) {
 		queries.push(Query.equal("authId", options.authId));
 	}
@@ -50,7 +44,7 @@ export const createUser = async (payload: Users, tenantId: string) => {
 			Permission.read(Role.team(tenantId)),
 			Permission.update(Role.team(tenantId)),
 			Permission.delete(Role.team(tenantId)),
-		]
+		],
 	});
 	return res;
 };
