@@ -1,0 +1,39 @@
+$id,name,isMain
+admin_dashboard,"Resumen administrativo",true
+intern_production,"Producción Interna",false
+extern_production,"Producción Externa",false
+total_production,"Producción total",false
+total_billing,"Facturación total",false
+utilities,"Utilidades",false
+material_request,"Solicitud de Material",false
+clients_follower,"Clientes",false
+material_client,"Material_cliente",false
+annual_report,"Reporte Anual",false
+admin,"Administracion",true
+billing,"Facturacion",false
+accounting_books,"Libros admin",false
+user_books,"Libro usuario",false
+payroll,"Nómina",false
+attendance,"Asistencia",false
+attendance_report,"Reporte de asistencia",false
+production,"Produccion",true
+duplicate_order,"Duplicar pedido",false
+order_report,"Reporte pedidos",false
+payment_report,"Reporte pagos",false
+processes_report,"Reporte maquinas",false
+processes,"Procesos",false
+materials,"Materiales",false
+reset_production,"Reset producción",false
+sales,"Ventas",true
+activities,"Actividades",false
+contacts,"Contactos",false
+templates,"Plantillas",false
+evaluation,"Evaluacion",false
+users,"Usuarios",true
+profiles,"Perfiles",false
+system,"Sistema",true
+billing_companies,"Facturación",false
+credentials,"Claves",false
+store,"Tienda",true
+cloud,"Cloud",true
+mail,"Mail",true
