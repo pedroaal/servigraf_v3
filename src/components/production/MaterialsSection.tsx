@@ -25,7 +25,6 @@ const materialDefault: MaterialForm = {
 	supplierId: "",
 	invoiceNumber: null,
 	total: 0,
-	deletedAt: null,
 };
 
 const MaterialsSection: Component<IProps> = (props) => {

@@ -9,7 +9,6 @@ export const listUsers = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 		Query.select(['*', 'profileId.name'])
 	];
 	if (options?.authId) {
@@ -67,10 +66,9 @@ export const updateUser = async (rowId: string, payload: Partial<Users>) => {
 };
 
 export const deleteUser = (rowId: string) => {
-	return tables.updateRow<Users>({
+	return tables.deleteRow({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.USERS,
 		rowId,
-		data: { deletedAt: new Date().toISOString() },
 	});
 };

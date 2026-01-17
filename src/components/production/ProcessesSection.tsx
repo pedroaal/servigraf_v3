@@ -27,7 +27,6 @@ const processDefault: ProcessForm = {
 	unitPrice: 0,
 	total: 0,
 	done: false,
-	deletedAt: null,
 };
 
 const PrecessesSection: Component<IProps> = (props) => {

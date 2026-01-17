@@ -7,7 +7,6 @@ export const listCostCenters = async () => {
 	const res = await tables.listRows<CostCenters>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.COST_CENTERS,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };

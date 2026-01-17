@@ -7,7 +7,7 @@ export const listOrderProcesses = async (options?: {
 	orderId?: string;
 	done?: boolean;
 }) => {
-	const queries = [Query.isNull("deletedAt")];
+	const queries = [];
 	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
 	if (options?.done !== undefined)
 		queries.push(Query.equal("done", options.done));

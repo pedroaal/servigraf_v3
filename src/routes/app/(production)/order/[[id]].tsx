@@ -54,7 +54,6 @@ const OrderSchema = v.object({
 	paymentAmount: v.number(),
 	balance: v.number(),
 	notes: v.nullable(v.string()),
-	deletedAt: v.nullable(v.string()),
 });
 
 type OrderForm = Omit<Orders, "$id" | "userId" | "processes" | "clientId"> & {
@@ -81,7 +80,6 @@ const ordersDefault = {
 	paymentAmount: 0,
 	balance: 0,
 	notes: null,
-	deletedAt: null,
 };
 
 const OrderPage = () => {

@@ -7,7 +7,6 @@ export const listBankAccounts = async () => {
 	const res = await tables.listRows<BankAccounts>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.BANK_ACCOUNTS,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };

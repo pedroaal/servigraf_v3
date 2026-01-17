@@ -31,7 +31,7 @@ const UserSchema = object({
 	isSuperAdmin: boolean(),
 });
 
-type UserForm = Omit<Users, "authId" | "deletedAt" | "profileId"> & {
+type UserForm = Omit<Users, "authId" | "profileId"> & {
 	profileId: string;
 };
 
@@ -97,7 +97,6 @@ const UserPage = () => {
 		try {
 			const payload = {
 				...formValues,
-				deletedAt: null,
 			};
 
 			if (isEdit()) {

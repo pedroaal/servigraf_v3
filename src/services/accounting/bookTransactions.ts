@@ -11,7 +11,6 @@ export const listBookTransactions = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.dateFrom)
 		queries.push(Query.equal("dateFrom", options.dateFrom));

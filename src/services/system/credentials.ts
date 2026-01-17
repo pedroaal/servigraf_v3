@@ -7,7 +7,6 @@ export const listCredentials = async () => {
 	const res = await tables.listRows<Credentials>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.CREDENTIALS,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };

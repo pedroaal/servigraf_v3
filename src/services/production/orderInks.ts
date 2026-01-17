@@ -8,7 +8,7 @@ export const listOrderInks = async (options?: {
 	inkId?: string;
 	side?: boolean;
 }) => {
-	const queries = [Query.isNull("deletedAt")];
+	const queries = [];
 	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
 	if (options?.inkId) queries.push(Query.equal("inkId", options.inkId));
 	if (options?.side !== undefined)

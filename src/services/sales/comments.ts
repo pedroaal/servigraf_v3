@@ -10,7 +10,6 @@ export const listComments = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.contactId)
 		queries.push(Query.equal("contactId", options.contactId));

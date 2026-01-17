@@ -9,7 +9,6 @@ export const listInks = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 
 	if (options?.search) queries.push(Query.equal("color", options.search));

@@ -7,7 +7,7 @@ export const listOrderMaterials = async (options?: {
 	orderId?: string;
 	supplierId?: string;
 }) => {
-	const queries = [Query.isNull("deletedAt")];
+	const queries = [];
 	if (options?.orderId) queries.push(Query.equal("orderId", options.orderId));
 	if (options?.supplierId)
 		queries.push(Query.equal("supplierId", options.supplierId));

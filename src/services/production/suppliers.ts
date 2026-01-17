@@ -9,7 +9,6 @@ export const listSuppliers = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.search) queries.push(Query.contains("name", options.search));
 

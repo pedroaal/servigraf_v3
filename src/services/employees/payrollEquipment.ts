@@ -9,7 +9,6 @@ export const listPayrollEquipment = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.payrollId)
 		queries.push(Query.equal("payrollId", options.payrollId));

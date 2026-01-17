@@ -32,7 +32,7 @@ const ProfileSchema = object({
 	active: boolean(),
 });
 
-type ProfileForm = Omit<Profiles, "$id" | "deletedAt">;
+type ProfileForm = Omit<Profiles, "$id">;
 
 const ProfilePage = () => {
 	const params = useParams();
@@ -170,7 +170,6 @@ const ProfilePage = () => {
 		try {
 			const payload = {
 				...formValues,
-				deletedAt: null,
 			};
 
 			let profileId: string;

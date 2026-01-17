@@ -11,7 +11,6 @@ export const listMaterials = async (
 ) => {
 	const queries = [
 		Query.select(["*", "categoryId.name"]),
-		Query.isNull("deletedAt"),
 	];
 	if (options?.categoryId)
 		queries.push(Query.equal("categoryId", options.categoryId));

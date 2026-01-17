@@ -14,7 +14,6 @@ export const listOrders = async (
 ) => {
 	const queries = [
 		Query.select(['*', 'clientId.companyId.name', 'processes.$id']),
-		Query.isNull("deletedAt"),
 	];
 	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.clientId)
@@ -68,12 +67,9 @@ export const updateOrder = async (id: string, payload: Partial<Orders>) => {
 };
 
 export const deleteOrder = (id: string) => {
-	return tables.updateRow<Orders>({
+	return tables.deleteRow({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.ORDERS,
 		rowId: id,
-		data: {
-			deletedAt: new Date().toISOString(),
-		},
 	});
 };

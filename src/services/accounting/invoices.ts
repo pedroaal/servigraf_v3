@@ -12,7 +12,6 @@ export const listInvoices = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.clientId)
 		queries.push(Query.equal("clientId", options.clientId));

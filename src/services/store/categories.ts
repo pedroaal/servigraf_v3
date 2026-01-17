@@ -9,7 +9,6 @@ export const listProductCategories = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.parentId)
 		queries.push(Query.equal("parentId", options.parentId));

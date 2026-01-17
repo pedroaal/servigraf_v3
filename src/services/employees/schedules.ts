@@ -7,7 +7,6 @@ export const listSchedules = async () => {
 	const res = await tables.listRows<Schedules>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.SCHEDULES,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };

@@ -9,7 +9,6 @@ export const listAreas = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.sort) queries.push(Query.orderAsc("sortOrder"));
 

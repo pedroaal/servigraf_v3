@@ -7,7 +7,6 @@ export const listTaxes = async () => {
 	const res = await tables.listRows<Taxes>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.TAXES,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };

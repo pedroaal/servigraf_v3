@@ -10,7 +10,6 @@ export const listNotifications = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.userId) queries.push(Query.equal("userId", options.userId));
 	if (options?.unreadOnly) queries.push(Query.isNull("readAt"));

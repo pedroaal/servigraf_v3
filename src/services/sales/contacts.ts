@@ -10,7 +10,6 @@ export const listContacts = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.clientCompanyId)
 		queries.push(Query.equal("clientCompanyId", options.clientCompanyId));

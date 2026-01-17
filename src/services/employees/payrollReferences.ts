@@ -7,7 +7,7 @@ export const listPayrollReferences = async (options?: {
 	payrollId?: string;
 	referenceType?: boolean;
 }) => {
-	const queries = [Query.isNull("deletedAt")];
+	const queries = [];
 	if (options?.payrollId)
 		queries.push(Query.equal("payrollId", options.payrollId));
 	if (options?.referenceType !== undefined)

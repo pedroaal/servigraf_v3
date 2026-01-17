@@ -9,7 +9,6 @@ export const listCategories = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 
 	if (options?.search) queries.push(Query.equal("name", options.search));

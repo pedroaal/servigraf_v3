@@ -13,7 +13,6 @@ export const listCrm = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.assignedId)
 		queries.push(Query.equal("assignedId", options.assignedId));

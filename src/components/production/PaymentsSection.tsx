@@ -18,7 +18,6 @@ const paymentDefault: PaymentForm = {
 	date: "",
 	method: "",
 	amount: 0,
-	deletedAt: null,
 };
 
 const PaymentsSection: Component<IProps> = (props) => {

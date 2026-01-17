@@ -10,7 +10,6 @@ export const listActivities = async (
 	},
 ) => {
 	const queries = [
-		Query.isNull("deletedAt"),
 	];
 	if (options?.canEvaluate)
 		queries.push(Query.equal("canEvaluate", options.canEvaluate));

@@ -7,7 +7,6 @@ export const listProfiles = async () => {
 	const res = await tables.listRows<Profiles>({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PROFILES,
-		queries: [Query.isNull("deletedAt")],
 	});
 	return res;
 };
@@ -47,12 +46,9 @@ export const updateProfile = async (id: string, payload: Partial<Profiles>) => {
 };
 
 export const deleteProfile = (rowId: string) => {
-	return tables.updateRow<Profiles>({
+	return tables.deleteRow({
 		databaseId: DATABASE_ID,
 		tableId: TABLES.PROFILES,
 		rowId,
-		data: {
-			deletedAt: new Date().toISOString(),
-		},
 	});
 };
