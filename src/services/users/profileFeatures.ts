@@ -17,7 +17,7 @@ export const listProfileFeatures = async (profileId?: string) => {
 
 export const syncProfileFeatures = async (
 	profileId: string,
-	modules: Array<{ moduleId: string; roleId: string }>,
+	features: Array<string>,
 ) => {
 	const existing = await listProfileFeatures(profileId);
 	await Promise.all(
@@ -31,14 +31,14 @@ export const syncProfileFeatures = async (
 	);
 
 	// Create new relations
-	const promises = modules.map((mod) =>
+	const promises = features.map((featureId) =>
 		tables.createRow<ProfileFeatures>({
 			databaseId: DATABASE_ID,
 			tableId: TABLES.PROFILE_FEATURES,
 			rowId: makeId(),
 			data: {
 				profileId,
-				moduleId: mod.moduleId,
+				featureId,
 			},
 		}),
 	);

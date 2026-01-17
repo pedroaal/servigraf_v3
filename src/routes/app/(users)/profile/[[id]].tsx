@@ -23,7 +23,6 @@ import {
 	getProfile,
 	updateProfile,
 } from "~/services/users/profiles";
-import { listRoles } from "~/services/users/roles";
 import type { Features, Profiles } from "~/types/appwrite";
 
 const ProfileSchema = object({
@@ -42,9 +41,9 @@ const ProfilePage = () => {
 
 	const isEdit = () => Boolean(params.id);
 
-	const [selectedFeatures, setSelectedFeatures] = createSignal<
-		Record<string, string>
-	>({});
+	const [selectedFeatures, setSelectedFeatures] = createSignal<Array<string>>(
+		[],
+	);
 
 	const [form, { Form, Field }] = createForm<ProfileForm>({
 		validate: valiForm(ProfileSchema),
@@ -56,24 +55,11 @@ const ProfilePage = () => {
 	});
 
 	const [features] = createResource(listFeatures);
-	const [roles] = createResource(listRoles);
-
 	const [profile] = createResource(() => params.id ?? "", getProfile);
 	const [profileFeatures] = createResource(
 		() => params.id ?? "",
 		listProfileFeatures,
 	);
-
-	const roleLevels = () => {
-		if (!roles()?.rows) return {};
-
-		const rolesMap: Record<string, number> = {};
-		for (const rol of roles()!.rows) {
-			rolesMap[rol.$id] = rol.level;
-		}
-
-		return rolesMap;
-	};
 
 	createEffect(
 		on(
@@ -95,106 +81,49 @@ const ProfilePage = () => {
 			() => profileFeatures(),
 			(profileFeatures) => {
 				if (!profileFeatures?.rows) return;
-
-				const moduleMap: Record<string, string> = {};
-				for (const pm of profileFeatures.rows) {
-					moduleMap[pm.moduleId] = pm.roleId;
-				}
-
-				setSelectedFeatures(moduleMap);
+				const features = profileFeatures?.rows.map((item) => item.featureId);
+				setSelectedFeatures(features);
 			},
 		),
 	);
 
-	const hasRole = (moduleId: string, roleId: string): boolean => {
-		return (
-			roleLevels()[selectedFeatures()[moduleId] || ""] >= roleLevels()[roleId]
-		);
-	};
-
-	const getRole = (level: number): string => {
-		return (
-			Object.keys(roleLevels()).find((key) => roleLevels()[key] === level) || ""
-		);
-	};
-
-	const handleCheckboxChange = (moduleId: string, roleId: string) => {
-		setSelectedFeatures((prev) => {
-			const current = prev[moduleId] || "";
-			const newState = { ...prev };
-
-			if (roleLevels()[current] >= roleLevels()[roleId]) {
-				newState[moduleId] = getRole(roleLevels()[roleId] - 1);
-			} else {
-				newState[moduleId] = roleId;
+	const handleCheckboxChange = (featureId: string) => {
+		setSelectedFeatures((state) => {
+			if (state.includes(featureId)) {
+				return state.filter((item) => item !== featureId);
 			}
 
-			if (newState[moduleId] === "") {
-				delete newState[moduleId];
-			}
-
-			return newState;
+			state.push(featureId);
+			return state;
 		});
 	};
 
-	const toggleAll = (roleId: string) => {
-		const allFeatures = features()?.rows || [];
-		const allChecked = allFeatures.every((m) => hasRole(m.$id, roleId));
-
-		setSelectedFeatures((prev) => {
-			const newState = { ...prev };
-			for (const module of allFeatures) {
-				if (allChecked) {
-					if (roleLevels()[newState[module.$id]] >= roleLevels()[roleId]) {
-						newState[module.$id] = getRole(roleLevels()[roleId] - 1);
-					}
-				} else {
-					newState[module.$id] = getRole(
-						Math.max(
-							roleLevels()[newState[module.$id] || ""] || 0,
-							roleLevels()[roleId],
-						),
-					);
-				}
-
-				if (newState[module.$id] === "") {
-					delete newState[module.$id];
-				}
-			}
-			return newState;
-		});
+	const toggleAll = () => {
+		const allFeatures = features()?.rows?.map((item) => item.$id) || [];
+		setSelectedFeatures((prev) =>
+			prev.length >= allFeatures.length ? [] : allFeatures,
+		);
 	};
 
 	const handleSubmit = async (formValues: ProfileForm) => {
 		const loaderId = addLoader();
 		try {
-			const payload = {
-				...formValues,
-			};
-
 			let profileId: string;
 
 			if (isEdit()) {
-				await updateProfile(params.id!, payload);
+				await updateProfile(params.id!, formValues);
 				profileId = params.id!;
 				addAlert({ type: "success", message: "Perfil actualizado con éxito" });
 			} else {
 				const newProfile = await createProfile(
-					payload as Profiles,
+					formValues as Profiles,
 					authStore.tenantId!,
 				);
 				profileId = newProfile.$id;
 				addAlert({ type: "success", message: "Perfil creado con éxito" });
 			}
 
-			const moduleRelations = Object.entries(selectedFeatures()).map(
-				([moduleId, roleId]) => ({
-					moduleId,
-					roleId,
-				}),
-			);
-
-			await syncProfileFeatures(profileId, moduleRelations);
+			await syncProfileFeatures(profileId, selectedFeatures());
 
 			navigate(Routes.profiles);
 		} catch (error: any) {
@@ -282,41 +211,31 @@ const ProfilePage = () => {
 						<table class="table table-zebra table-sm">
 							<thead>
 								<tr>
-									<th class="w-2/5">Módulos del perfil</th>
-									<For each={roles()?.rows}>
-										{(role) => (
-											<th class="w-15 text-center">
-												<button
-													type="button"
-													class="btn btn-xs btn-ghost"
-													onClick={() => toggleAll(role.$id)}
-												>
-													{role.name}
-												</button>
-											</th>
-										)}
-									</For>
+									<th class="w-2/5">Feature</th>
+									<th class="w-15 text-center">
+										<button
+											type="button"
+											class="btn btn-xs btn-ghost"
+											onClick={() => toggleAll()}
+										>
+											Seleccionar Todos
+										</button>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<For each={features()?.rows}>
-									{(module: Features) => (
+									{(item: Features) => (
 										<tr>
-											<td class={module.isMain ? "" : "pl-10"}>
-												{module.name}
+											<td classList={{ "pl-10": !item.isMain }}>{item.name}</td>
+											<td class="text-center">
+												<input
+													type="checkbox"
+													class="checkbox checkbox-sm"
+													checked={selectedFeatures().includes(item.$id)}
+													onChange={() => handleCheckboxChange(item.$id)}
+												/>
 											</td>
-											{roles()?.rows.map((role) => (
-												<td class="text-center">
-													<input
-														type="checkbox"
-														class="checkbox checkbox-sm"
-														checked={hasRole(module.$id, role.$id)}
-														onChange={() =>
-															handleCheckboxChange(module.$id, role.$id)
-														}
-													/>
-												</td>
-											))}
 										</tr>
 									)}
 								</For>
